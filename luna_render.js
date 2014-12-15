@@ -200,7 +200,7 @@ lunaRender.prototype.startDrawColor = function( color )
 
   color = ( typeof color !== 'undefined' ? color : "rgb(0,0,0)" );
 
-  g_painter.context.setTransform ( 1, 0, 0, 1, 0, 0 );
+  this.context.setTransform ( 1, 0, 0, 1, 0, 0 );
 
   // clear view
   this.context.fillStyle =  color;
