@@ -193,8 +193,8 @@ guiRegion.prototype.mouseDown = function( button, x, y )
   cy = y + this.y;
   
   // recursive check children
-  for (var child in this.guiChildren ) { 
-    if ( child.mouseDown ( button, cx, cy ) ) {
+  for (var ind in this.guiChildren ) { 
+    if ( this.guiChildren[ind].mouseDown ( button, cx, cy ) ) {
       return true;
     }
   }
@@ -210,39 +210,66 @@ guiRegion.prototype.mouseDown = function( button, x, y )
 
 guiRegion.prototype.mouseDrag = function( button, x, y )
 {
+  var dx = x - g_scene.eStart[0];
+  var dy = y - g_scene.eStart[1];
+  
   if (!this.visible) return false;
   
+  // if moving..
+  if ( g_scene.eMode == 1 ) {
+    this.setSize ( g_scene.eStart[2] + dx, g_scene.eStart[3] + dy, this.width, this.height )
+    return true;    
+  }
+ 
   // hit test self
   if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
-    return false;
-     
-  // check moving - hit test title
-  if ( x < 10 ) {
-    g_scene.eMode = 1;    // moving mode
-    g_scene.eStart = [ x, y, this.x, this.y ];
-    return true; 
-  } 
   
   // map coords for children  
   cx = x + this.x;
   cy = y + this.y;
   
   // recursive check children
-  for (var child in this.guiChildren ) { 
-    if ( child.mouseDown ( button, cx, cy ) ) {
+  for (var ind in this.guiChildren ) { 
+    if ( this.guiChildren[ind].mouseDrag ( button, cx, cy ) ) {
       return true;
     }
   }
   
   // check self for activity
-  if ( this.OnMouseDown ( button, cx, cy ) ) {
+  if ( this.OnMouseDrag ( button, cx, cy ) ) {
      return true;
-  }
-     
+  }     
   return false;
 }
 
 
+guiRegion.prototype.mouseMove = function( button, x, y )
+{
+  var dx = x - g_scene.eStart[0];
+  var dy = y - g_scene.eStart[1];
+  
+  if (!this.visible) return false;
+ 
+  // hit test self
+  if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
+  
+  // map coords for children  
+  cx = x + this.x;
+  cy = y + this.y;
+  
+  // recursive check children
+  for (var ind in this.guiChildren ) { 
+    if ( this.guiChildren[ind].mouseMove ( button, cx, cy ) ) {
+      return true;
+    }
+  }
+  
+  // check self for activity
+  if ( this.OnMouseMove ( button, cx, cy ) ) {
+     return true;
+  }     
+  return false;
+}
 
 
 
@@ -256,6 +283,11 @@ guiRegion.prototype.OnMouseDrag = function( button, x, y )
 {
   return false;
 }
+guiRegion.prototype.OnMouseMove = function( button, x, y )
+{
+  return false;
+}
+
 
 
 guiRegion.prototype.doubleClick = function( ev, x, y )
