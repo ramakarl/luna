@@ -176,9 +176,7 @@ guiRegion.prototype.hitTest = function(x, y)
 guiRegion.prototype.mouseDown = function( button, x, y )
 {
   if (!this.visible) return false;
-  
-  
-  
+    
   // hit test self
   if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
     return false;
@@ -187,8 +185,16 @@ guiRegion.prototype.mouseDown = function( button, x, y )
   if ( y < 15 ) {    
     g_scene.eMode = 1;          // moving mode
     g_scene.eStart = [ x+this.x, y+this.y, this.x, this.y ];    // start of move (in parent coordinates)
-    g_scene.setFocus ( this );
-    console.log ( "start: " + this.name +": " +g_scene.eStart[0]+ "," + g_scene.eStart[1] );
+    g_scene.setFocus ( this );    
+    return true; 
+  } 
+  // check resize
+  console.log ( "hit: "+ this.name+ ": "+x+", "+y +"  "+this.width +"," + this.height);
+  if ( x > this.width -25 && y > this.height-25 ) {
+    
+    g_scene.eMode = 2;          // moving mode
+    g_scene.eStart = [ x+this.x, y+this.y, this.width, this.height ];    // start of resize (in parent coordinates)
+    g_scene.setFocus ( this );    
     return true; 
   } 
   
@@ -217,39 +223,37 @@ guiRegion.prototype.mouseDown = function( button, x, y )
 
 guiRegion.prototype.mouseDrag = function( button, x, y )
 {
-  console.log ( "drag: " + this.name +": " +x+ "," + y );
   var dx = x - g_scene.eStart[0];
   var dy = y - g_scene.eStart[1];
   
   if (!this.visible) return false;
   
-  // if moving..
-  if ( g_scene.eMode == 1 && g_scene.eFocus == this ) {    
-    var obj = g_scene.eFocus;
-    console.log ( "object: " + obj.name );
-    console.log ( "local x,y: " + x + ", " + y );
-    console.log ( "local dx,dy: " + dx + ", " + dy );
-    console.log ( "old pos:   " + g_scene.eStart[2] + ", " + g_scene.eStart[3] );
-    obj.setSize ( g_scene.eStart[2] + obj.x + dx, g_scene.eStart[3] + obj.y + dy, obj.width, obj.height );
-    return true;    
+  if ( g_scene.eFocus == this ) {    
+    var obj = g_scene.eFocus;    
+    // if moving..
+    if ( g_scene.eMode == 1 ) {      
+      obj.setSize ( g_scene.eStart[2] + obj.x + dx, g_scene.eStart[3] + obj.y + dy, obj.width, obj.height );
+      return true;    
+    }
+    // if resizing
+    if ( g_scene.eMode == 2 ) {            
+      obj.setSize ( obj.x, obj.y, g_scene.eStart[2] + obj.x + dx, g_scene.eStart[3] + obj.y + dy );
+      return true;    
+    }
   }
- 
+  
   // hit test self
   if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
-  
-  //console.log ( "var: " + x );
+    return false;
   
   // map coords for self
   var cx = x + 0;
   var cy = y + 0;
   
-  //console.log ( "var: " + cx );
-  
   // recursive check children
   var child = null;
   for (var ind in this.guiChildren ) { 
     child = this.guiChildren[ind];
-    //console.log ( "var: " + cx );    
     if ( child.mouseDrag ( button, cx - child.x, cy - child.y ) ) {
       return true;
     }
