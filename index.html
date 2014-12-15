@@ -6,6 +6,10 @@
 
     <!-- <link href="css/simple.css" rel="stylesheet" type="text/css" /> -->
 
+    <script>
+    var g_scn;
+    </script>
+    
     <script src='lib/jquery.js'></script>
     <script src='lib/jquery.mousewheel.js'/></script>
     <script src='lib/jquery.capslockstate.js'/></script>
@@ -26,6 +30,7 @@
 
     <script src='tools/toolNav.js'></script>
 
+    <script src='luna_scene.js'></script>
     <script src='luna_render.js'></script>
     <script src='luna_input.js'></script>
 
@@ -45,8 +50,7 @@
     var g_context;
     var g_nav = new toolNav();
     var g_root = null;
-
-	var g_input = null;
+    var g_input = null;
 
     function loop() {
 
@@ -81,32 +85,36 @@
       g_painter = new lunaRender( g_canvas.width, g_canvas.height, g_context );
 
       // Luna scene root
-      g_root = new guiRegion ( "root", g_context );
+      g_root = new guiRegion ( "root" );
       g_root.setSize ( 0, 0, g_canvas.width, g_canvas.height );
 
       // Luna input root
       g_input = new lunaInput( "canvas", g_root );
+      
+      // Luna scene
+      g_scene = new lunaScene ( g_canvas, g_context, g_input, g_root );
 
       // TESTING
-      testa = new guiRegion ( "a", g_context );
+      testa = new guiRegion ( "a" );
       testa.setSize ( 80, 20, 150, 200 );
       testa.setBackClr ( 1, 0, 0, 0.2 );
       testa.setClip ( true );
       g_root.addChild ( testa );
 
-      testb = new guiRegion ( "b", g_context );
+      testb = new guiRegion ( "b" );
       testb.setSize ( 30, 60, 150, 100 );
       testb.setBackClr ( 0, 1, 0, 0.2 );
       testb.setClip ( true );
       g_root.addChild ( testb );
 
-      testc = new guiRegion ( "c", g_context );
+      testc = new guiRegion ( "c" );
       testc.setSize ( 90, 120, 200, 200 );
       testc.setBackClr ( 0, 0, 1, 0.2 );
       testc.setClip ( true );
       testa.addChild ( testc );
 
-      requestAnimationFrame( loop, 1 );
+      requestAnimationFrame( loop, 1 );     
+      
     });
 
     if ( !window.requestAnimationFrame ) {

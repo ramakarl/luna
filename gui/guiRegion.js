@@ -1,6 +1,6 @@
 
 
-function guiRegion( name, context )
+function guiRegion( name )
 {
   // All regions have this
   this.x = 0;
@@ -12,8 +12,7 @@ function guiRegion( name, context )
   this.parent = null;
   this.guiChildren = [];  
   this.bgColor = "rgba(230,230,255, 0.8)";
-  this.name = name;
-  this.context = context;
+  this.name = name;   
 
   this.transform       = [ [ 1, 0, 0], [0, 1, 0], [0, 0, 1] ];
   this.world_transform = [ [ 1, 0, 0], [0, 1, 0], [0, 0, 1] ];
@@ -25,7 +24,7 @@ function guiRegion( name, context )
 
 guiRegion.prototype.init = function ( x, y, w, h )
 {
-    this.width = w;
+  this.width = w;
 	this.height = h;
 	this.move ( x, y );
 }
@@ -119,21 +118,21 @@ guiRegion.prototype.drawChildren = function()
                            true, "rgba(0,0,0, 0.2)" );*/
   
   M = this.world_transform;
-  g_painter.context.setTransform( M[0][0], M[1][0], M[0][1], M[1][1], M[0][2], M[1][2] );  
+  g_scene.ctx.setTransform( M[0][0], M[1][0], M[0][1], M[1][1], M[0][2], M[1][2] );  
   this.draw ();			
   
   if ( this.bClip ) {
     //--- Clipping	
-    this.context.save();
-    this.context.beginPath();
-    this.context.rect ( 0, 0, this.width, this.height );      
-    this.context.closePath();
+    g_scene.ctx.save();
+    g_scene.ctx.beginPath();
+    g_scene.ctx.rect ( 0, 0, this.width, this.height );      
+    g_scene.ctx.closePath();
     //-- debug clipping (next 4 lines)
     //console.log ( "CLIP: " + this.name+ ":  " + M[0][2] + "," +M[1][2] + "," + M[0][0] + "," + M[1][1] );
     //this.context.lineWidth = 4;
     //this.context.stroke();
     //this.context.lineWidth = 1;
-    this.context.clip ();
+    g_scene.ctx.clip ();
   }
 						   
   for (var ind in this.guiChildren ) {
@@ -141,7 +140,7 @@ guiRegion.prototype.drawChildren = function()
       this.guiChildren[ind].drawChildren();		
     }
   }  
-  this.context.restore();
+  g_scene.ctx.restore();
 }
 
 // I don't think this is the greatest, but x,y are in canvas
@@ -176,16 +175,88 @@ guiRegion.prototype.hitTest = function(x, y)
 
 guiRegion.prototype.mouseDown = function( button, x, y )
 {
-  r = this.hitTest(x, y);
-  if (r == this) 
-    return this;
-  else if (r)
-  {
-    return r.mouseDown(button, x, y);
+  if (!this.visible) return false;
+  
+  // hit test self
+  if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
+    return false;
+     
+  // check moving - hit test title
+  if ( x < 10 ) {
+    g_scene.eMode = 1;    // moving mode
+    g_scene.eStart = [ x, y, this.x, this.y ];
+    return true; 
+  } 
+  
+  // map coords for children  
+  cx = x + this.x;
+  cy = y + this.y;
+  
+  // recursive check children
+  for (var child in this.guiChildren ) { 
+    if ( child.mouseDown ( button, cx, cy ) ) {
+      return true;
+    }
   }
-
-  return r;
+  
+  // check self for activity
+  if ( this.OnMouseDown ( button, cx, cy ) ) {
+     return true;
+  }
+     
+  return false;
 }
+
+
+guiRegion.prototype.mouseDrag = function( button, x, y )
+{
+  if (!this.visible) return false;
+  
+  // hit test self
+  if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
+    return false;
+     
+  // check moving - hit test title
+  if ( x < 10 ) {
+    g_scene.eMode = 1;    // moving mode
+    g_scene.eStart = [ x, y, this.x, this.y ];
+    return true; 
+  } 
+  
+  // map coords for children  
+  cx = x + this.x;
+  cy = y + this.y;
+  
+  // recursive check children
+  for (var child in this.guiChildren ) { 
+    if ( child.mouseDown ( button, cx, cy ) ) {
+      return true;
+    }
+  }
+  
+  // check self for activity
+  if ( this.OnMouseDown ( button, cx, cy ) ) {
+     return true;
+  }
+     
+  return false;
+}
+
+
+
+
+
+// virtual mouse functions 
+//  (overridden by specific gui behavior)
+guiRegion.prototype.OnMouseDown = function( button, x, y )
+{
+  return false;
+}
+guiRegion.prototype.OnMouseDrag = function( button, x, y )
+{
+  return false;
+}
+
 
 guiRegion.prototype.doubleClick = function( ev, x, y )
 {
