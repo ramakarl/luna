@@ -28,6 +28,8 @@
     <script src='gui/guiTextbox.js'></script>
     <script src='gui/guiAction.js'></script>
 
+    <script src='gui/guiButton.js'></script>
+
     <script src='tools/toolNav.js'></script>
 
     <script src='luna_scene.js'></script>
@@ -95,23 +97,40 @@
       g_scene = new lunaScene ( g_canvas, g_context, g_input, g_root );
 
       // TESTING
-      testa = new guiRegion ( "a" );
+      var testa = new guiRegion ( "a" );
       testa.setSize ( 80, 20, 150, 200 );
       testa.setBackClr ( 1, 0, 0, 0.2 );
       testa.setClip ( true );
       g_root.addChild ( testa );
 
-      testb = new guiRegion ( "b" );
+      var testb = new guiRegion ( "b" );
       testb.setSize ( 30, 60, 150, 100 );
       testb.setBackClr ( 0, 1, 0, 0.2 );
       testb.setClip ( true );
       g_root.addChild ( testb );
 
-      testc = new guiRegion ( "c" );
+      var testc = new guiRegion ( "c" );
       testc.setSize ( 90, 120, 200, 200 );
       testc.setBackClr ( 0, 0, 1, 0.2 );
       testc.setClip ( true );
       testa.addChild ( testc );
+
+      var img = new Image();
+      img.src = "img/ghost_alt2.png";
+      img.onload = function() {
+
+
+
+        console.log("loading image");
+
+        var test_button = new guiButton( "test:button" );
+        test_button.setImage( img );
+        //test_button.setSize ( 10, 10, 50, 50);
+        //test_button.setBackClr ( 0, 0, 1, 0.2 );
+        //test_button.setClip ( true );
+        testa.addChild ( test_button );
+
+      }
 
       requestAnimationFrame( loop, 1 );     
       
