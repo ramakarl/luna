@@ -123,26 +123,24 @@ guiRegion.prototype.drawChildren = function()
   this.draw ();			
   
   if ( this.bClip ) {
-  //--- Clipping	
+    //--- Clipping	
     this.context.save();
     this.context.beginPath();
-	this.context.rect ( 0, 0, this.width, this.height );      
+    this.context.rect ( 0, 0, this.width, this.height );      
     this.context.closePath();
-	//-- debug clipping (next 4 lines)
-	console.log ( "CLIP: " + this.name+ ":  " + M[0][2] + "," +M[1][2] + "," + M[0][0] + "," + M[1][1] );
-	//this.context.lineWidth = 4;
-	//this.context.stroke();
-	//this.context.lineWidth = 1;
+    //-- debug clipping (next 4 lines)
+    //console.log ( "CLIP: " + this.name+ ":  " + M[0][2] + "," +M[1][2] + "," + M[0][0] + "," + M[1][1] );
+    //this.context.lineWidth = 4;
+    //this.context.stroke();
+    //this.context.lineWidth = 1;
     this.context.clip ();
   }
 						   
   for (var ind in this.guiChildren ) {
-    if (this.guiChildren[ind].visible) {	
-	    console.log ( "DRAW: " + this.guiChildren[ind].name	);
-        this.guiChildren[ind].drawChildren();		
-	}
-  }
-  console.log ( "restore" );
+    if (this.guiChildren[ind].visible) {		  
+      this.guiChildren[ind].drawChildren();		
+    }
+  }  
   this.context.restore();
 }
 
