@@ -1,10 +1,20 @@
 
 // Requires JQuery
 
-function lunaInput( html_canvas_id ) {
+function lunaInput( html_canvas_id, gui_root ) {
   this.canvas_id = html_canvas_id;
+  this.gui_root = gui_root;
   this.debug = false;
+
+  this.mouse_drag = {};
+  this.key_state = {};
+
   this.init();
+
+  for (var i=0; i<256; i++) {
+    this.key_state[i] = false;
+  }
+
 }
 
 
@@ -23,7 +33,8 @@ lunaInput.prototype.init = function() {
         x = e.pageX,
         y = e.pageY;
 
-    if (t.debug) { console.log(">> mouseup", e); } 
+    t.mouse_drag[button] = false;
+    //t.gui_root.mouseUp( button, x, y );
 
   });
 
@@ -33,6 +44,9 @@ lunaInput.prototype.init = function() {
         y = e.pageY;
 
     if (t.debug) { console.log(">> mousedown", e); } 
+
+    t.mouse_drag[button] = true;
+    t.gui_root.mouseDown( button, x, y );
 
   });
 
@@ -66,6 +80,18 @@ lunaInput.prototype.init = function() {
 
     if (t.debug) { console.log(">> mousemove", e); } 
 
+    var mouse_drag_event = false;
+    for (var ind in t.mouse_drag) {
+      if (t.mouse_drag[ind]) {
+        mouse_drag_event = true;
+        t.gui_root.mouseDrag( ind, x, y );
+      }
+    }
+
+    if (!mouse_drag_event) {
+      //t.gui_root.mouseMove( x, y );
+    }
+
   });
 
   $(canvas_id).mousewheel( function(e, delta, deltax, deltay) {
@@ -84,6 +110,8 @@ lunaInput.prototype.init = function() {
 
     if (t.debug) { console.log(">> click", e); } 
 
+    console.log("click", e);
+
   });
 
   $(canvas_id).dblclick( function(e) {
@@ -93,12 +121,21 @@ lunaInput.prototype.init = function() {
 
     if (t.debug) { console.log(">> dblclick", e); } 
 
+    console.log("dblclick", e);
+
+
   });
 
   $(canvas_id).keydown( function(e) {
     var key = e.which;
 
     if (t.debug) { console.log(">> keydown", e); } 
+
+    console.log("keydown", e, e.keyCode, e.key);
+
+    t.key_state[ e.keyCode ] = true;
+
+    //t.gui_root.keyDown( key, e );
 
   });
 
@@ -107,12 +144,20 @@ lunaInput.prototype.init = function() {
 
     if (t.debug) { console.log(">> keyup", e); } 
 
+    console.log("keyUp", e);
+
+    t.key_state[ e.keyCode ] = false;
+
+    //t.gui_root.keyUp( key, e );
+
   });
 
   $(canvas_id).keypress( function(e) {
     var key = e.which;
 
     if (t.debug) { console.log(">> keypress", e); } 
+
+    console.log("keyPress", e, e.keyCode, e.key);
 
   });
 
