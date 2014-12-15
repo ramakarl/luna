@@ -38,8 +38,11 @@ lunaInput.prototype.init = function() {
         y = e.pageY;
 
     t.mouse_drag[button] = false;
+    
     //t.gui_root.mouseUp( button, x, y );
-
+    
+    // restore edit mode (necessary)
+    g_scene.eMode = 0;
   });
 
   $(canvas_id).mousedown( function(e) {
