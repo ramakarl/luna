@@ -58,7 +58,8 @@ guiButton.prototype.draw = function()
   if (!this.image) {
     g_painter.drawFill( 0, 0, this.width, this.height, this.bgColor );
   } else {
-    g_painter.drawImage( this.image, this.x, this.y, this.width, this.height );
+    // top left of self is 0,0
+    g_painter.drawImage( this.image, 0, 0, this.width, this.height );
   }
 
 }
