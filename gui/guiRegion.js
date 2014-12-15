@@ -177,30 +177,34 @@ guiRegion.prototype.mouseDown = function( button, x, y )
 {
   if (!this.visible) return false;
   
+  console.log ( "down: " + this.name +": " +x + "," + y +"  " + this.x + "," + this.y);
+  
   // hit test self
   if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
     return false;
-     
+    
   // check moving - hit test title
-  if ( x < 10 ) {
+  if ( y < 10 ) {    
     g_scene.eMode = 1;    // moving mode
-    g_scene.eStart = [ x, y, this.x, this.y ];
+    g_scene.eStart = [ x+this.x, y+this.y, this.x, this.y ];
+    g_scene.setFocus ( this );
     return true; 
   } 
   
-  // map coords for children  
-  cx = x + this.x;
-  cy = y + this.y;
-  
+ // map coords for self
+  var cx = x + 0;   // scrolling
+  var cy = y + 0;
+ 
   // recursive check children
-  for (var ind in this.guiChildren ) { 
-    if ( this.guiChildren[ind].mouseDown ( button, cx, cy ) ) {
+  for (var ind in this.guiChildren ) {     
+    if ( this.guiChildren[ind].mouseDown ( button, cx - this.x, cy - this.y ) ) {      
       return true;
     }
   }
   
   // check self for activity
   if ( this.OnMouseDown ( button, cx, cy ) ) {
+     g_scene.setFocus ( this );
      return true;
   }
      
@@ -217,20 +221,26 @@ guiRegion.prototype.mouseDrag = function( button, x, y )
   
   // if moving..
   if ( g_scene.eMode == 1 ) {
-    this.setSize ( g_scene.eStart[2] + dx, g_scene.eStart[3] + dy, this.width, this.height )
+    if ( g_scene.eFocus != null ) {
+      console.log ( "local x,y: " + x + ", " + y );
+      console.log ( "local dx,dy: " + dx + ", " + dy );
+      console.log ( "old pos:   " + g_scene.eStart[2] + ", " + g_scene.eStart[3] );
+      g_scene.eFocus.setSize ( g_scene.eStart[2] + this.x + dx, g_scene.eStart[3] + this.y + dy, g_scene.eFocus.width, g_scene
+.eFocus.height )
+    }
     return true;    
   }
  
   // hit test self
   if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
   
-  // map coords for children  
-  cx = x + this.x;
-  cy = y + this.y;
+  // map coords for self
+  var cx = x + 0;
+  var cy = y + 0;
   
   // recursive check children
   for (var ind in this.guiChildren ) { 
-    if ( this.guiChildren[ind].mouseDrag ( button, cx, cy ) ) {
+    if ( this.guiChildren[ind].mouseDrag ( button, cx - this.x, cy - this.y ) ) {
       return true;
     }
   }
