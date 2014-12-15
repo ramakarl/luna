@@ -27,6 +27,7 @@
     <script src='tools/toolNav.js'></script>
 
     <script src='luna_render.js'></script>
+    <script src='luna_input.js'></script>
 
     <script>
 
@@ -44,6 +45,8 @@
     var g_context = null;
     var g_nav = new toolNav();
 
+    var g_input = null;
+
     function loop() {
 
       frame = frame + 1;
@@ -57,7 +60,7 @@
       var container = document.querySelector( 'section' );
       container.innerHTML = "FPS: " + (1000.0/msec);
 
-	  g_painter.startDraw ();
+      g_painter.startDraw ();
       g_painter.drawGrid();
 
       requestAnimationFrame( loop, 1 );
@@ -66,10 +69,13 @@
     $(document).ready( function() {
       console.log("ready");
 
+      g_input = new lunaInput( "canvas" );
+      g_input.init();
+
       var cvs = document.getElementById('canvas');
       cvs.onselectstart = function() { return false; }
 
-	  g_painter = new lunaRender( "canvas" );
+      g_painter = new lunaRender( "canvas" );
 
       requestAnimationFrame( loop, 1 );
     });
