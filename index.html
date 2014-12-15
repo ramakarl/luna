@@ -31,57 +31,58 @@
     <script>
 
     var drawing = true,
-    running = true,
-    mouseDown = false,
-    visible = true;
+    var running = true,
+    var mouseDown = false,
+    var visible = true;
 
     var msec = 0;
     var frame = 0;
     var lastTime = new Date();
 
     var g_painter = null;
-      var g_canvas = "canvas";
+    var g_canvas = "canvas";
     var g_context = null;
     var g_nav = new toolNav();
 
     function loop() {
 
-    frame = frame + 1;
-    if ( frame >= 30 ) {
-      var d = new Date();
-      msec = (d.getTime() - lastTime ) / frame;
-      lastTime = d;
-      frame = 0;
+      frame = frame + 1;
+      if ( frame >= 30 ) {
+        var d = new Date();
+        msec = (d.getTime() - lastTime ) / frame;
+        lastTime = d;
+        frame = 0;
+      }
+
+      var container = document.querySelector( 'section' );
+      container.innerHTML = "FPS: " + (1000.0/msec);
+
+      g_painter.drawGrid();
+
+      requestAnimationFrame( loop, 1 );
     }
-    var container = document.querySelector( 'section' );
-    container.innerHTML = "FPS: " + (1000.0/msec);
 
-    g_painter.drawGrid();
+    $(document).ready( function() {
+      console.log("ready");
 
-    requestAnimationFrame( loop, 1 );
-    }
+      var cvs = document.getElementById('canvas');
+      cvs.onselectstart = function() { return false; }
 
-      $(document).ready( function() {
-        console.log("ready");
+      g_painter = new lunaRender( "canvas" );
 
-        var cvs = document.getElementById('canvas');
-        cvs.onselectstart = function() { return false; }
-
-    g_painter = new lunaRender( "canvas" );
-
-    requestAnimationFrame( loop, 1 );
-      });
+      requestAnimationFrame( loop, 1 );
+    });
 
     if ( !window.requestAnimationFrame ) {
       window.requestAnimationFrame = ( function() {
 
-      return window.webkitRequestAnimationFrame ||
-      window.mozRequestAnimationFrame ||
-      window.oRequestAnimationFrame ||
-      window.msRequestAnimationFrame ||
-      function( callback, element ) {
-        window.setTimeout( callback, 1000 );
-      };
+        return window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function( callback, element ) {
+          window.setTimeout( callback, 1000 );
+        };
 
       } )();
     }
