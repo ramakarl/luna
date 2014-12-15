@@ -9,6 +9,7 @@ function lunaRender( canvas_id )
   
   this.pixel_per_unit = 1.0;
 
+  
   this.width = this.canvas.width;
   this.height = this.canvas.height;
 
@@ -19,14 +20,16 @@ function lunaRender( canvas_id )
   this.view.y1 = 0;
   this.view.x2 = this.width;
   this.view.y2 = this.height;
-
+  
+  this.debugPrint();
+  
   this.zoom_max = 40.0;
   this.zoom_min = 0.001;  
-  this.zoom = 1.0;   		// initial zoom
+  this.zoom = 1;   		// initial zoom
   this.zoom_factor = 1.0;
 
   this.setView ( 0, 0, this.zoom );  	// set view for first time
-
+	
   this.dirty_flag = true;
 
   this.default_line_width = 5;
@@ -47,13 +50,17 @@ lunaRender.prototype.setView = function( x, y, z )
 	this.view.cy = y;
 	this.zoom = z;
 
+  console.log ( "w: " + this.width + " h: " +this.height );
+	
 	// compute the view region
-  var dx = this.width / (z * 2.0);
-	var dy = this.height / (z * 2.0);
+  var dx = this.width / (2.0*z);
+  var dy = this.height / (2.0*z);
   this.view.x1 = this.view.cx - dx;
   this.view.y1 = this.view.cy - dy;
   this.view.x2 = this.view.cx + dx;
   this.view.y2 = this.view.cy + dy;
+  
+  this.debugPrint();
 
 	//console.log ( "zoom: " + this.zoom );
 	//console.log ( "view: " + this.view.x1 + " " + this.view.y1 + " " + this.view.x2 + " " + this.view.y2 );

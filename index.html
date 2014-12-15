@@ -57,6 +57,7 @@
       var container = document.querySelector( 'section' );
       container.innerHTML = "FPS: " + (1000.0/msec);
 
+	  g_painter.startDraw ();
       g_painter.drawGrid();
 
       requestAnimationFrame( loop, 1 );
@@ -68,7 +69,7 @@
       var cvs = document.getElementById('canvas');
       cvs.onselectstart = function() { return false; }
 
-      g_painter = new lunaRender( "canvas" );
+	  g_painter = new lunaRender( "canvas" );
 
       requestAnimationFrame( loop, 1 );
     });
