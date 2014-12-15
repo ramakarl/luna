@@ -8,15 +8,19 @@ function lunaInput( html_canvas_id, gui_root ) {
 
   this.mouse_drag = {};
   this.key_state = {};
+  for (var i=0; i<256; i++) { this.key_state[i] = false; }
 
   this.init();
 
-  for (var i=0; i<256; i++) {
-    this.key_state[i] = false;
-  }
 
 }
 
+lunaInput.prototype.getKeyState = function( keyCode ) {
+  if (keyCode in this.key_state) {
+    return this.key_state[keyCode];
+  }
+  return false;
+}
 
 lunaInput.prototype.init = function() {
   var canvas_id = this.canvas_id;
@@ -110,8 +114,6 @@ lunaInput.prototype.init = function() {
 
     if (t.debug) { console.log(">> click", e); } 
 
-    console.log("click", e);
-
   });
 
   $(canvas_id).dblclick( function(e) {
@@ -121,9 +123,6 @@ lunaInput.prototype.init = function() {
 
     if (t.debug) { console.log(">> dblclick", e); } 
 
-    console.log("dblclick", e);
-
-
   });
 
   $(canvas_id).keydown( function(e) {
@@ -131,9 +130,7 @@ lunaInput.prototype.init = function() {
 
     if (t.debug) { console.log(">> keydown", e); } 
 
-    console.log("keydown", e, e.keyCode, e.key);
-
-    t.key_state[ e.keyCode ] = true;
+    t.key_state[ key ] = true;
 
     //t.gui_root.keyDown( key, e );
 
@@ -144,9 +141,7 @@ lunaInput.prototype.init = function() {
 
     if (t.debug) { console.log(">> keyup", e); } 
 
-    console.log("keyUp", e);
-
-    t.key_state[ e.keyCode ] = false;
+    t.key_state[ key ] = false;
 
     //t.gui_root.keyUp( key, e );
 
@@ -157,7 +152,7 @@ lunaInput.prototype.init = function() {
 
     if (t.debug) { console.log(">> keypress", e); } 
 
-    console.log("keyPress", e, e.keyCode, e.key);
+    //t.gui_root.keyPress( key );
 
   });
 
