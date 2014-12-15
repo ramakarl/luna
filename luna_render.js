@@ -1,17 +1,12 @@
 
 
-function lunaRender( canvas_id )
+function lunaRender( width, height, context )
 {
-  this.canvas = $( "#" + canvas_id )[0];
-  this.context = this.canvas.getContext('2d');
-
-  this.gridMode = 2;		// 0=none, 1=dots, 2=lines
-  
-  this.pixel_per_unit = 1.0;
-
-  
-  this.width = this.canvas.width;
-  this.height = this.canvas.height;
+  this.context = context;
+  this.gridMode = 2;		// 0=none, 1=dots, 2=lines  
+  this.pixel_per_unit = 1.0;  
+  this.width = width;
+  this.height = height;
 
   this.view = new Object(); 
   this.view.cx = this.width / 2;
@@ -28,7 +23,7 @@ function lunaRender( canvas_id )
   this.zoom = 1;   		// initial zoom
   this.zoom_factor = 1.0;
 
-  this.setView ( 0, 0, this.zoom );  	// set view for first time
+  this.setView ( this.view.cx, this.view.cy, this.zoom );  	// set view for first time
 	
   this.dirty_flag = true;
 
@@ -41,6 +36,15 @@ lunaRender.prototype.setGrid = function ( val )
 {
 	this.gridMode = val;
 	this.dirty_flag = true;
+}
+
+lunaRender.prototype.getWidth = function ()
+{   
+   return this.width;
+}
+lunaRender.prototype.getHeight = function ()
+{   
+   return this.height;
 }
 
 lunaRender.prototype.setView = function( x, y, z )
@@ -179,7 +183,7 @@ lunaRender.prototype.drawGrid = function()
 lunaRender.prototype.startDraw = function()
 {
   // clear view
-  g_painter.context.setTransform ( 1, 0, 0, 1, 0, 0 );
+  this.context.setTransform ( 1, 0, 0, 1, 0, 0 );
 
   this.context.clearRect( 0, 0, this.width, this.height );
 
@@ -985,11 +989,15 @@ lunaRender.prototype.drawPolygon = function( path,  x, y, color, fill, line_widt
 
 }
 
-
-
-
-
-
+lunaRender.prototype.drawFill = function( x, y, w, h, fill_color )
+{
+ var ctx = this.context;
+  ctx.beginPath();
+  ctx.rect( x, y, w, h );
+  ctx.fillStyle = fill_color;
+  ctx.fill();
+  ctx.stroke();
+}
 
 lunaRender.prototype.drawRectangle = function( x, y, w, h, line_width, line_color, fill_flag, fill_color )
 {

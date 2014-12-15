@@ -40,9 +40,10 @@
     var lastTime = new Date();
 
     var g_painter = null;
-    var g_canvas = "canvas";
-    var g_context = null;
+    var g_canvas;
+	var g_context;
     var g_nav = new toolNav();
+	var g_root = null;
 
     function loop() {
 
@@ -56,9 +57,10 @@
 
       var container = document.querySelector( 'section' );
       container.innerHTML = "FPS: " + (1000.0/msec);
-
+	  
 	  g_painter.startDraw ();
       g_painter.drawGrid();
+	  g_root.drawChildren();
 
       requestAnimationFrame( loop, 1 );
     }
@@ -66,10 +68,37 @@
     $(document).ready( function() {
       console.log("ready");
 
+	  // Get the canvas/context
       var cvs = document.getElementById('canvas');
       cvs.onselectstart = function() { return false; }
-
-	  g_painter = new lunaRender( "canvas" );
+	  g_canvas = $( "#canvas" )[0];
+      g_context = g_canvas.getContext('2d');
+	  
+	  // Luna render
+	  g_painter = new lunaRender( g_canvas.width, g_canvas.height, g_context );	  
+	  
+	  // Luna scene root
+	  g_root = new guiRegion ( "root", g_context );
+	  g_root.setSize ( 0, 0, g_canvas.width, g_canvas.height );
+	  
+	  // TESTING
+	  testa = new guiRegion ( "a", g_context );
+	  testa.setSize ( 80, 20, 150, 200 );
+	  testa.setBackClr ( 1, 0, 0, 0.2 );
+	  testa.setClip ( true );
+	  g_root.addChild ( testa );	  
+	  
+	  testb = new guiRegion ( "b", g_context );	  
+	  testb.setSize ( 30, 60, 150, 100 );
+	  testb.setBackClr ( 0, 1, 0, 0.2 );
+	  testb.setClip ( true );
+	  g_root.addChild ( testb );
+	  
+	  testc = new guiRegion ( "c", g_context );	  
+	  testc.setSize ( 90, 120, 200, 200 );
+	  testc.setBackClr ( 0, 0, 1, 0.2 );
+	  testc.setClip ( true );
+	  testa.addChild ( testc );
 
       requestAnimationFrame( loop, 1 );
     });

@@ -1,17 +1,19 @@
 
 
-function guiRegion( name )
+function guiRegion( name, context )
 {
   // All regions have this
   this.x = 0;
   this.y = 0;
+  this.bClip = false;
   this.width = 40;
   this.height = 40;
   this.visible = true;    
   this.parent = null;
   this.guiChildren = [];  
-  this.bgColor = "rgba(0,0,0,0.2)";
+  this.bgColor = "rgba(230,230,255, 0.8)";
   this.name = name;
+  this.context = context;
 
   this.transform       = [ [ 1, 0, 0], [0, 1, 0], [0, 0, 1] ];
   this.world_transform = [ [ 1, 0, 0], [0, 1, 0], [0, 0, 1] ];
@@ -28,12 +30,31 @@ guiRegion.prototype.init = function ( x, y, w, h )
 	this.move ( x, y );
 }
 
+guiRegion.prototype.setClip = function ( b )
+{
+  this.bClip = b;
+}
+
 guiRegion.prototype.handleEvent = function(ev)
 {
   if (this.parent)
     if ("handleEvent" in this.parent)
       this.parent.handleEvent(ev);
 }
+ 
+guiRegion.prototype.setSize = function( x1, y1, w, h )
+{
+  this.x = x1;
+  this.y = y1;
+  this.width = w;  
+  this.height = h;
+  this.move ( x1, y1);
+}
+guiRegion.prototype.setBackClr = function ( r, g, b, a )
+{
+  this.bgColor = "rgba("+(r*255.0)+","+(g*255.0)+","+(b*255.0)+","+a+")";
+}
+
 
 /*
 guiRegion.prototype.registerPickCallback = function(f)
@@ -88,9 +109,7 @@ guiRegion.prototype.move = function ( x, y )
 
 guiRegion.prototype.draw = function()
 {
-   g_painter.drawRectangle( 0, 0, this.width, this.height,  
-                           0, "rgb(0,0,0)", 
-                           true, this.bgColor );
+   g_painter.drawFill( 0, 0, this.width, this.height, this.bgColor );
 }
 
 guiRegion.prototype.drawChildren = function()
@@ -98,17 +117,33 @@ guiRegion.prototype.drawChildren = function()
   /* g_painter.drawRectangle( this.x, this.y, this.width, this.height, 
                            0, "rgb(0,0,0)", 
                            true, "rgba(0,0,0, 0.2)" );*/
+  
   M = this.world_transform;
   g_painter.context.setTransform( M[0][0], M[1][0], M[0][1], M[1][1], M[0][2], M[1][2] );  
-  this.draw ();				  
+  this.draw ();			
+  
+  if ( this.bClip ) {
+  //--- Clipping	
+    this.context.save();
+    this.context.beginPath();
+	this.context.rect ( 0, 0, this.width, this.height );      
+    this.context.closePath();
+	//-- debug clipping (next 4 lines)
+	console.log ( "CLIP: " + this.name+ ":  " + M[0][2] + "," +M[1][2] + "," + M[0][0] + "," + M[1][1] );
+	//this.context.lineWidth = 4;
+	//this.context.stroke();
+	//this.context.lineWidth = 1;
+    this.context.clip ();
+  }
 						   
   for (var ind in this.guiChildren ) {
-    if (this.guiChildren[ind].visible) {		
-        this.guiChildren[ind].drawChildren();
+    if (this.guiChildren[ind].visible) {	
+	    console.log ( "DRAW: " + this.guiChildren[ind].name	);
+        this.guiChildren[ind].drawChildren();		
 	}
   }
-
-
+  console.log ( "restore" );
+  this.context.restore();
 }
 
 // I don't think this is the greatest, but x,y are in canvas
@@ -188,9 +223,7 @@ guiRegion.prototype.mouseWheelXY = function(delta, x, y)
 
 guiRegion.prototype.addChild = function( child )
 {
-   
    this.guiChildren.push ( child );
    child.parent = this;
-
    child.setWorldMatrix();
 }
