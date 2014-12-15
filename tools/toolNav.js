@@ -19,9 +19,6 @@ function toolNav( x, y )
 
   this.mouse_drag_flag = false;
 
-  this.mouse_world_xy = g_painter.devToWorld(x, y);
-  this.snap_world_xy = g_snapgrid.snapGrid( this.mouse_world_xy );
-
 }
 
 toolNav.prototype.update = function(x, y)
