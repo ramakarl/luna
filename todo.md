@@ -24,6 +24,7 @@ GUI elements
 Top level design
 ================
 
+  - luna_render - rendering engine
   - luna_scene - storage and management of GUI tree
   - luna_message - message 'queue' for GUI objects
   - luna_input - GUI input handling
