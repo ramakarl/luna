@@ -991,12 +991,46 @@ lunaRender.prototype.drawPolygon = function( path,  x, y, color, fill, line_widt
 
 lunaRender.prototype.drawFill = function( x, y, w, h, fill_color )
 {
- var ctx = this.context;
+  var ctx = this.context;
   ctx.beginPath();
   ctx.rect( x, y, w, h );
   ctx.fillStyle = fill_color;
   ctx.fill();
   ctx.stroke();
+}
+
+lunaRender.prototype.drawImage = function( img, x, y,
+                                           w, h,
+                                           clip_x, clip_y, clip_w, clip_h) {
+  var ctx = this.context;
+  x = ( typeof x !== 'undefined' ? x : 0 );
+  y = ( typeof y !== 'undefined' ? y : 0 );
+
+  var draw_type = 0;
+
+  if ( (typeof w !== 'undefined') && (typeof h !== 'undefined') ) {
+    draw_type = 1;
+
+    if ( (typeof clip_x !== 'undefined') &&
+         (typeof clip_y !== 'undefined') &&
+         (typeof clip_w !== 'undefined') &&
+         (typeof clip_h !== 'undefined')
+       ) {
+      draw_type = 2;
+    }
+
+  }
+
+  //ctx.translate( x, y );
+  if (draw_type == 0) {
+    ctx.drawImage( img, x, y);
+  } else if (draw_type == 1) {
+    ctx.drawImage( img, x, y, w, h );
+  } else if (draw_type == 2) {
+    ctx.drawImage( img, clip_x, clip_y, clip_w, clip_h, x, y, w, h );
+  }
+  //ctx.translate( -x, -y );
+
 }
 
 lunaRender.prototype.drawRectangle = function( x, y, w, h, line_width, line_color, fill_flag, fill_color )

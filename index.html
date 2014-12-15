@@ -8,6 +8,8 @@
 
     <script>
     var g_scn;
+
+    var g_img;
     </script>
     
     <script src='lib/jquery.js'></script>
@@ -119,15 +121,11 @@
       img.src = "img/ghost_alt2.png";
       img.onload = function() {
 
-
-
-        console.log("loading image");
+        console.log("loading image", img);
 
         var test_button = new guiButton( "test:button" );
         test_button.setImage( img );
-        //test_button.setSize ( 10, 10, 50, 50);
-        //test_button.setBackClr ( 0, 0, 1, 0.2 );
-        //test_button.setClip ( true );
+        test_button.setSize ( 10, 10, img.width, img.height );
         testa.addChild ( test_button );
 
       }
