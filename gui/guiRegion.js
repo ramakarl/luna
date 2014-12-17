@@ -325,7 +325,7 @@ guiRegion.prototype.mouseDrag = function( button, x, y )
       return true;    
     }
 	// check focus object first for drag
-	if ( this.OnMouseDrag ( button, x, y ) )
+	if ( this.OnMouseDrag ( button, x+this.scrollx, y+this.scrolly ) )
       return true;
   }
 

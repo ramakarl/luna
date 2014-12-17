@@ -26,7 +26,9 @@ guiScrollbar.prototype.updatePos = function()
 {
   // map value to bar position  
   this.full = this.width;
-  this.pos_min = this.full + (this.value-this.value_min) * this.height / (this.value_max-this.value_min);
+  var u = (this.value-this.value_min) / (this.value_max-this.value_min);  
+  console.log ( " "+ this.pos_max + "  " + this.height );
+  this.pos_min = this.full + u * this.height 
   this.pos_max = this.pos_min + (this.value_view*this.height / (this.value_max-this.value_min));  
 }
 
@@ -40,7 +42,9 @@ guiScrollbar.prototype.OnMouseDown = function( button, x, y )
 guiScrollbar.prototype.OnMouseDrag = function( button, x, y )
 {
   // start scrollbar drag  
-  this.value = this.value_start + ((y-this.pos_start) * (this.value_max-this.value_min) / this.height); 
+  var u = (y-this.full) / this.height; 
+  console.log ( " "+ u );
+  this.value = this.value_min + u * (this.value_max-this.value_min);
   if ( this.value < this.value_min ) this.value = this.value_min;
   if ( this.value > this.value_max ) this.value = this.value_max;
   this.updatePos ();  
