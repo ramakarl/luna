@@ -995,6 +995,30 @@ lunaRender.prototype.drawFill = function( x, y, w, h, fill_color )
   ctx.fillStyle = fill_color;
   ctx.fillRect ( x, y, w, h);  
 }
+
+lunaRender.prototype.drawRect = function( x, y, w, h, border_color )
+{
+  var ctx = this.context;
+  ctx.beginPath();
+  ctx.rect( x, y, w, h );
+  ctx.strokeStyle = border_color;
+  ctx.stroke();
+}
+
+lunaRender.prototype.drawFillRect = function( x, y, w, h, fill_color, line_width, border_color )
+{
+  var ctx = this.context;
+  ctx.beginPath();
+  ctx.rect( x, y, w, h );
+  ctx.fillStyle = fill_color;
+
+  ctx.lineWidth = line_width;
+  ctx.strokeStyle = border_color;
+
+  ctx.fill();
+  ctx.stroke();
+>>>>>>> origin/master
+}
 lunaRender.prototype.drawTri = function( x1, y1, x2, y2, x3, y3, fill_color )
 {
   var ctx = this.context;  
