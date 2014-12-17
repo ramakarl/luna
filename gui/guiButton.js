@@ -4,19 +4,40 @@ function guiButton( name )
   this.constructor(name);
 
   // debugging...
-  this.uniq = parseInt(256.0*Math.random());
+  this.uniq = parseInt(128.0*Math.random());
   this.bgColor = "rgba(0," + this.uniq +",0,0.5)";
+  this.press_color = "rgba(60," + (this.uniq + 60) + ",60,0.5)";
 
   console.log( this.bgColor );
 
   this.image = null;
+  this.press_image = null;
 
+  this.button_press = false;
 
 }
 guiButton.inherits( guiRegion );
 
 guiButton.prototype.setImage = function( img ) {
   this.image = img;
+
+  if (!this.press_image) {
+    this.press_color = "rgba(255,255,255,0.2)";
+  }
+}
+
+guiButton.prototype.setPressImage = function( img ) {
+  this.press_image = img;
+}
+
+guiButton.prototype.OnMouseDown = function( button, x, y ) {
+  this.button_press = true;
+  return false;
+}
+
+guiButton.prototype.OnMouseUp = function( button, x, y ) {
+  this.button_press = false;
+  return false;
 }
 
 /*
@@ -56,10 +77,25 @@ guiButton.prototype.draw = function()
 {
 
   if (!this.image) {
-    g_painter.drawFill( 0, 0, this.width, this.height, this.bgColor );
+    if (this.button_press) {
+      g_painter.drawFill( 0, 0, this.width, this.height, this.press_color );
+    } else {
+      g_painter.drawFill( 0, 0, this.width, this.height, this.bgColor );
+    }
   } else {
     // top left of self is 0,0
-    g_painter.drawImage( this.image, 0, 0, this.width, this.height );
+
+    if (this.button_press) {
+      if (this.press_image ) {
+        g_painter.drawImage( this.press_image , 0, 0, this.width, this.height );
+      } else {
+        //highlight image
+        g_painter.drawImage( this.image, 0, 0, this.width, this.height );
+        g_painter.drawFill( 0, 0, this.width, this.height, this.press_color );
+      }
+    } else {
+      g_painter.drawImage( this.image, 0, 0, this.width, this.height );
+    }
   }
 
 }

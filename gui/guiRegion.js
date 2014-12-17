@@ -25,8 +25,8 @@ function guiRegion( name )
 guiRegion.prototype.init = function ( x, y, w, h )
 {
   this.width = w;
-	this.height = h;
-	this.move ( x, y );
+  this.height = h;
+  this.move ( x, y );
 }
 
 guiRegion.prototype.setClip = function ( b )
@@ -40,7 +40,7 @@ guiRegion.prototype.handleEvent = function(ev)
     if ("handleEvent" in this.parent)
       this.parent.handleEvent(ev);
 }
- 
+
 guiRegion.prototype.setSize = function( x1, y1, w, h )
 {
   this.x = x1;
@@ -98,7 +98,7 @@ guiRegion.prototype.move = function ( x, y )
    this.x = x;
    this.y = y;
    this.setWorldMatrix ();
-   
+
    for (var ind in this.guiChildren ) { 
 		cx = this.guiChildren[ind].x;
 		cy = this.guiChildren[ind].y;
@@ -116,11 +116,11 @@ guiRegion.prototype.drawChildren = function()
   /* g_painter.drawRectangle( this.x, this.y, this.width, this.height, 
                            0, "rgb(0,0,0)", 
                            true, "rgba(0,0,0, 0.2)" );*/
-  
+
   M = this.world_transform;
   g_scene.ctx.setTransform( M[0][0], M[1][0], M[0][1], M[1][1], M[0][2], M[1][2] );  
   this.draw ();			
-  
+
   if ( this.bClip ) {
     //--- Clipping	
     g_scene.ctx.save();
@@ -173,14 +173,40 @@ guiRegion.prototype.hitTest = function(x, y)
   return null;
 }
 
+guiRegion.prototype.mouseUp = function( button, x, y )
+{
+  g_scene.eMode = 0;
+
+  var cx = x + 0;   // scrolling
+  var cy = y + 0;
+
+  // recursive check children
+  var child = null;
+  for (var ind in this.guiChildren ) {     
+    child = this.guiChildren[ind];
+    if ( child.mouseUp ( button, cx - child.x, cy - child.y ) ) {      
+      return true;
+    }
+  }
+
+
+  // check self for activity
+  if ( this.OnMouseUp( button, cx, cy ) ) {
+     return true;
+  }
+
+  return false;
+}
+
+
 guiRegion.prototype.mouseDown = function( button, x, y )
 {
   if (!this.visible) return false;
-    
+
   // hit test self
   if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
     return false;
-    
+
   // check moving - hit test title
   if ( y < 15 ) {    
     g_scene.eMode = 1;          // moving mode
@@ -191,17 +217,17 @@ guiRegion.prototype.mouseDown = function( button, x, y )
   // check resize
   console.log ( "hit: "+ this.name+ ": "+x+", "+y +"  "+this.width +"," + this.height);
   if ( x > this.width -25 && y > this.height-25 ) {
-    
+
     g_scene.eMode = 2;          // moving mode
     g_scene.eStart = [ x+this.x, y+this.y, this.width, this.height ];    // start of resize (in parent coordinates)
     g_scene.setFocus ( this );    
     return true; 
   } 
-  
+
  // map coords for self
   var cx = x + 0;   // scrolling
   var cy = y + 0;
- 
+
   // recursive check children
   var child = null;
   for (var ind in this.guiChildren ) {     
@@ -210,13 +236,13 @@ guiRegion.prototype.mouseDown = function( button, x, y )
       return true;
     }
   }
-  
+
   // check self for activity
   if ( this.OnMouseDown ( button, cx, cy ) ) {
      g_scene.setFocus ( this );
      return true;
   }
-     
+
   return false;
 }
 
@@ -225,9 +251,9 @@ guiRegion.prototype.mouseDrag = function( button, x, y )
 {
   var dx = x - g_scene.eStart[0];
   var dy = y - g_scene.eStart[1];
-  
+
   if (!this.visible) return false;
-  
+
   if ( g_scene.eFocus == this ) {    
     var obj = g_scene.eFocus;    
     // if moving..
@@ -241,15 +267,15 @@ guiRegion.prototype.mouseDrag = function( button, x, y )
       return true;    
     }
   }
-  
+
   // hit test self
   if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
     return false;
-  
+
   // map coords for self
   var cx = x + 0;
   var cy = y + 0;
-  
+
   // recursive check children
   var child = null;
   for (var ind in this.guiChildren ) { 
@@ -258,7 +284,7 @@ guiRegion.prototype.mouseDrag = function( button, x, y )
       return true;
     }
   }
-  
+
   // check self for activity
   if ( this.OnMouseDrag ( button, cx, cy ) ) {
      return true;
@@ -271,23 +297,23 @@ guiRegion.prototype.mouseMove = function( button, x, y )
 {
   var dx = x - g_scene.eStart[0];
   var dy = y - g_scene.eStart[1];
-  
+
   if (!this.visible) return false;
- 
+
   // hit test self
   if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
-  
+
   // map coords for children  
   cx = x + this.x;
   cy = y + this.y;
-  
+
   // recursive check children
   for (var ind in this.guiChildren ) { 
     if ( this.guiChildren[ind].mouseMove ( button, cx, cy ) ) {
       return true;
     }
   }
-  
+
   // check self for activity
   if ( this.OnMouseMove ( button, cx, cy ) ) {
      return true;
@@ -303,10 +329,17 @@ guiRegion.prototype.OnMouseDown = function( button, x, y )
 {
   return false;
 }
+
+guiRegion.prototype.OnMouseUp = function( button, x, y )
+{
+  return false;
+}
+
 guiRegion.prototype.OnMouseDrag = function( button, x, y )
 {
   return false;
 }
+
 guiRegion.prototype.OnMouseMove = function( button, x, y )
 {
   return false;

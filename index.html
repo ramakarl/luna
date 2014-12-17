@@ -117,17 +117,23 @@
       testc.setClip ( true );
       testa.addChild ( testc );
 
+      var test_button = new guiButton( "test:button" );
+      test_button.setSize ( 10, 40, 32, 32 );
+      testa.addChild ( test_button );
+
       var img = new Image();
-      img.src = "img/ghost_alt2.png";
+      img.src = "img/ghost_alt2_u.png";
       img.onload = function() {
-
         console.log("loading image", img);
-
-        var test_button = new guiButton( "test:button" );
         test_button.setImage( img );
         test_button.setSize ( 10, 40, img.width, img.height );        
-        testa.addChild ( test_button );
+      }
 
+      var img_d = new Image();
+      img_d.src = "img/ghost_alt2.png";
+      img_d.onload = function() {
+        console.log("loading image", img_d );
+        test_button.setPressImage( img_d );
       }
 
       requestAnimationFrame( loop, 1 );     
