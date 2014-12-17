@@ -47,7 +47,12 @@ guiScrollbar.prototype.OnMouseDrag = function( button, x, y )
   if ( this.value < this.value_min ) this.value = this.value_min;
   if ( this.value > this.value_max ) this.value = this.value_max;
   this.updatePos ();  
-  this.parent.scrolly = this.value;      
+
+  // Create and send scroll event
+  e = g_scene.createEvent ( "scroll", "mdrag", "", null )
+  e.attach ( this.value );
+  g_scene.sendEvent ( this, e );
+
   return true;
 }
 
