@@ -1017,8 +1017,8 @@ lunaRender.prototype.drawFillRect = function( x, y, w, h, fill_color, line_width
 
   ctx.fill();
   ctx.stroke();
->>>>>>> origin/master
 }
+
 lunaRender.prototype.drawTri = function( x1, y1, x2, y2, x3, y3, fill_color )
 {
   var ctx = this.context;  
