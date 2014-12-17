@@ -3,6 +3,8 @@ GUI elements
 ============
 
   - button
+    * ~~button (spring load)~~
+    * button (toggle)
   - colorbar
   - directoryline
   - dropdown

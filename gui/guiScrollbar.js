@@ -1,184 +1,64 @@
 
 function guiScrollbar( gui_name )
 {
-  this.constructor ( gui_name )   
-  this.bgColor = "rgba(100, 10, 10, 0.3)";
+  this.constructor ( gui_name );
 
-
-  var w = this.width;
-  var h = this.height;
-
-  this.bar_width = w;
-  this.bar_height = 20;
-
-  this.bar_position = 0;
-
-  console.log("scrollbar: " + w + " " + h );
-
-  this.ready = false;
-
-  this.once = false;
-
+  this.bgColor = "rgba(0,0,0,0)";   // bgColor must be 0,0,0,0 for scrollbars
+  this.barColor = "rgba(200,200,200,.9)";
+  this.selColor = "rgba(100,100,100,1)";  
+  this.bOverlay = true;  
+  this.value = 0;
+  this.value_view = 10;
+  this.value_min = 0;
+  this.value_max = 100;  
 }
+
 guiScrollbar.inherits ( guiRegion );
 
-//-----------------------------
-
-
-guiScrollbar.prototype.init = function(x, y, w, h)
+guiScrollbar.prototype.setRange = function( rmin, rmax )
 {
-  this.width = w;
-  this.height = h;
-  this.move( x, y );
-
-  this.ready = true;
-
-  this.bar_width = this.width;
-  this.bar_height = 100;
-
-  //this.bar_position = 0;
-
-  this.bgColor = "rbga(150,150,150, 0.3)";
-  this.barColor = "rbga(230,230,230, 0.3)";
+  this.range_min = rmin;
+  this.range_max = rmax;
+  this.full = this.width;
+  this.updatePos();
+}
+guiScrollbar.prototype.updatePos = function()
+{
+  // map value to bar position  
+  this.full = this.width;
+  this.pos_min = this.full + (this.value-this.value_min) * this.height / (this.value_max-this.value_min);
+  this.pos_max = this.pos_min + (this.value_view*this.height / (this.value_max-this.value_min));  
 }
 
-//-----------------------------
-
-guiScrollbar.prototype.hitTest = function(x, y)
+guiScrollbar.prototype.OnMouseDown = function( button, x, y )
 {
-  var u = numeric.dot( this.inv_world_transform, [x,y,1] );
-  var r = null;
-
-  if ( (0 <= u[0]) && (u[0] <= this.width) &&
-       (0 <= u[1]) && (u[1] <= this.height) )
-    r = this;
-
-  return r;
+  // start scrollbar drag
+  this.pos_start = y;    // or x if horiz
+  this.value_start = this.value;
+  return true;
+}
+guiScrollbar.prototype.OnMouseDrag = function( button, x, y, dx, dy )
+{
+  // start scrollbar drag  
+  this.value = this.value_start + ((y-this.pos_start) * (this.value_max-this.value_min) / this.height); 
+  if ( this.value < this.value_min ) this.value = this.value_min;
+  if ( this.value > this.value_max ) this.value = this.value_max;
+  this.updatePos ();  
+  this.parent.scrolly = this.value;      
+  return true;
 }
 
-//-----------------------------
-
-guiScrollbar.prototype.mouseDown = function( button, x, y)
+guiScrollbar.prototype.OnMouseWheel = function(delta)
 {
-
-  //console.log("guiScrollbar");
-
-
-  if (this.hitTest(x, y))
-  {
-    //console.log("  hit");
-    return true;
-  }
-
-  return false;
-}
-
-//-----------------------------
-
-guiScrollbar.prototype.mouseWheel = function(delta)
-{
-  //console.log("guiScrollbar.mouseWheel delta " + delta);
-}
-
-
-//-----------------------------
-
-guiScrollbar.prototype.mouseWheelXY = function(delta, x, y)
-{
-
-  if (this.hitTest(x,y))
-  {
-    //console.log("guiScrollbar.mouseWheelXY hit");
-  }
-
-}
-
-//-----------------------------
-
-guiScrollbar.prototype.refresh = function() 
-{
-
-  if (this.parent)
-  {
-    this.height = this.parent.height;
-    this.x = this.parent.width - this.width;
-    this.y = 0;
-    //this.move( this.x, this.y );
-    //this.move( this.parent.width - this.width, 0 );
-    this.ready = true;
-
-    this.bar_width = this.width;
-    this.bar_height = 100;
-
-    //this.bar_position = 0;
-
-    this.bgColor = "rbga(150,150,150, 0.3)";
-    this.barColor = "rbga(230,230,230, 0.3)";
-  }
-
-}
-
-//-----------------------------
-
-guiScrollbar.prototype.updatePosition = function( r )
-{
-  var H = this.height - this.bar_height;
-  this.bar_position = r*H;
-
-  //console.log("guiScrollbar.updatePosition: bar_position " + this.bar_position);
-}
-
-guiScrollbar.prototype.getPosition = function( )
-{
-  var H = this.height - this.bar_height;
-
-  var r = 0.0;
-  if (H > 1)
-    r = this.bar_position  / H;
-
-  return r;
-
-}
-
-guiScrollbar.prototype.notifyPositionChange = function()
-{
-
-  var H = this.height - this.bar_height;
-  var r = 0.0;
-  if (H > 1)
-    r = this.bar_position / H;
-
-  var ev = { owner: this.name, type: "updatePosition", position : r };
-
-  this.parent.handleEvent( ev );
-
 }
 
 guiScrollbar.prototype.draw = function()
 {
-
-  // update here
-  //this.refresh();
-
-  if (this.ready)
-  {
-    //g_painter.drawRectangle(this.x, this.y, this.width, this.height,
-    g_painter.drawRectangle(0, 0, this.width, this.height,
-                            1, "rgb(0,0,0)",
-                            true, this.bgColor);
-
-    //g_painter.drawRectangle(this.x, this.bar_position, this.bar_width, this.bar_height,
-    g_painter.drawRectangle(0, this.bar_position, this.bar_width, this.bar_height,
-                            0, "rgb(0,0,0)",
-                            true, this.barColor);
-  }
-  else 
-  {
-    g_painter.drawRectangle(this.x, this.y, this.width, this.height,
-                            0, "rgb(0,0,0)",
-                            true, this.bgColor );
-  }
-
+  var mid = this.full / 2;  
+  g_painter.drawFill ( 0, 0, this.width, this.height, this.barColor );
+  g_painter.drawTri  ( mid, 0, this.full, this.full, 0, this.full, this.selColor );
+  g_painter.drawFill ( 0, this.pos_min, this.width, this.pos_max-this.pos_min, this.selColor );
+  g_painter.drawTri  ( 0, this.height-this.full, this.full, this.height-this.full, mid, this.height, this.selColor );
 }
 
  

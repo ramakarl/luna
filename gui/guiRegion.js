@@ -5,13 +5,16 @@ function guiRegion( name )
   // All regions have this
   this.x = 0;
   this.y = 0;
-  this.bClip = false;
+  this.bClip = false;  
+  this.bOverlay = false;
+  this.scrollx=0;	// scrolling variables
+  this.scrolly=0;
   this.width = 40;
-  this.height = 40;
+  this.height = 40;  
   this.visible = true;    
   this.parent = null;
   this.guiChildren = [];  
-  this.bgColor = "rgba(230,230,255, 0.8)";
+  this.bgColor = "rgba(0,0,255,.1)";
   this.name = name;   
 
   this.window_head_size = 15;
@@ -60,7 +63,7 @@ guiRegion.prototype.setSize = function( x1, y1, w, h )
 }
 guiRegion.prototype.setBackClr = function ( r, g, b, a )
 {
-  this.bgColor = "rgba("+(r*255.0)+","+(g*255.0)+","+(b*255.0)+","+a+")";
+  this.bgColor = "rgba("+Math.floor(r*255.0)+","+Math.floor(g*255.0)+","+Math.floor(b*255.0)+","+a+")";
 }
 
 
@@ -77,6 +80,7 @@ guiRegion.prototype.registerPickCallback = function(f)
 guiRegion.prototype.setWorldMatrix = function ()
 {
   // local transform
+  
   this.transform     = [ [ 1, 0, this.x ],
 					     [ 0, 1, this.y ],
                          [ 0, 0, 1 ] ];
@@ -87,16 +91,10 @@ guiRegion.prototype.setWorldMatrix = function ()
 
   if ( this.parent == null ) 
   {
-    this.world_transform     = [ [ 1, 0, this.x ], 
-                                 [ 0, 1, this.y ], 
-                                 [ 0, 0, 1 ] ];
-    this.inv_world_transform = [ [ 1, 0, -this.x ], 
-                                 [ 0, 1, -this.y ], 
-                                 [ 0, 0, 1 ] ];
-
+    this.world_transform     = this.transform;
+    this.inv_world_transform = this.inv_transform;
     return this.world_transform;
   }   
-
   this.world_transform     = numeric.dot ( this.parent.setWorldMatrix (), this.transform );   
   this.inv_world_transform = numeric.dot ( this.inv_transform, this.parent.inv_world_transform);
   return this.world_transform;
@@ -117,42 +115,53 @@ guiRegion.prototype.move = function ( x, y )
 
 guiRegion.prototype.draw = function()
 {
-  //g_painter.drawFill( 0, 0, this.width, this.height, this.bgColor );
-  //g_painter.drawRect( 0, 0, this.width, this.height, 3, this.bgColor );
-
-  var c = "rgba(128,110,141,0.9)";
-  g_painter.drawFillRect( 0, 0, this.width, this.height, this.bgColor, 2, c );
 }
 
-guiRegion.prototype.drawChildren = function()
+guiRegion.prototype.drawChildren = function( sx, sy )
 {
-  /* g_painter.drawRectangle( this.x, this.y, this.width, this.height, 
-                           0, "rgb(0,0,0)", 
-                           true, "rgba(0,0,0, 0.2)" );*/
-
-  M = this.world_transform;
-  g_scene.ctx.setTransform( M[0][0], M[1][0], M[0][1], M[1][1], M[0][2], M[1][2] );  
-  this.draw ();			
-
-  if ( this.bClip ) {
-    //--- Clipping	
-    g_scene.ctx.save();
+  M = this.world_transform;  
+  if ( this.bOverlay ) { sx=0; sy=0; }
+  
+  g_scene.ctx.save();
+  
+  // Clipping	
+  if ( this.bClip ) {      
+    g_scene.ctx.setTransform( M[0][0], M[1][0], M[0][1], M[1][1], M[0][2]-sx, M[1][2]-sy);     
     g_scene.ctx.beginPath();
     g_scene.ctx.rect ( 0, 0, this.width, this.height );      
     g_scene.ctx.closePath();
     //-- debug clipping (next 4 lines)
     //console.log ( "CLIP: " + this.name+ ":  " + M[0][2] + "," +M[1][2] + "," + M[0][0] + "," + M[1][1] );
-    //this.context.lineWidth = 4;
-    //this.context.stroke();
-    //this.context.lineWidth = 1;
+    //g_scene.ctx.lineWidth = 4;
+    //g_scene.ctx.stroke();
+    //g_scene.ctx.lineWidth = 1;
     g_scene.ctx.clip ();
   }
-						   
+
+  // Draw self 
+  g_scene.ctx.setTransform( M[0][0], M[1][0], M[0][1], M[1][1], M[0][2]-this.scrollx-sx, M[1][2]-this.scrolly-sy);  
+  this.draw ();  
+  
+  // Draw children
+  var child = null;
   for (var ind in this.guiChildren ) {
-    if (this.guiChildren[ind].visible) {		  
-      this.guiChildren[ind].drawChildren();		
+    child = this.guiChildren[ind];
+    if (child.visible) {	  
+	  // background
+      g_scene.ctx.fillStyle = child.bgColor;
+      g_scene.ctx.fillRect ( child.x, child.y, child.width, child.height );
+	  // child
+      child.drawChildren( this.scrollx, this.scrolly );		
+	  // border	  
+	  if ( !child.bOverlay ) {
+		  g_scene.ctx.beginPath();
+		  g_scene.ctx.rect ( child.x, child.y, child.width, child.height );
+		  g_scene.ctx.stroke ();
+		  g_scene.ctx.closePath();
+	  }
     }
-  }  
+  }   
+ 
   g_scene.ctx.restore();
 }
 
@@ -221,7 +230,6 @@ guiRegion.prototype.mouseDown = function( button, x, y )
     return false;
 
   if (this.prop_flag_move) {
-
     // check moving - hit test title
     //if ( y < 15 ) {    
     if ( y < this.window_head_size ) {    
@@ -232,19 +240,15 @@ guiRegion.prototype.mouseDown = function( button, x, y )
     } 
   }
 
-
   if (this.prop_flag_resize) {
     // check resize
     console.log ( "hit: "+ this.name+ ": "+x+", "+y +"  "+this.width +"," + this.height);
-    //if ( x > this.width -25 && y > this.height-25 ) {
     if ( x > this.width -this.window_apron_size && y > this.height-this.window_apron_size) {
-
       g_scene.eMode = 2;          // moving mode
       g_scene.eStart = [ x+this.x, y+this.y, this.width, this.height ];    // start of resize (in parent coordinates)
       g_scene.setFocus ( this );    
       return true; 
     } 
-
   }
 
  // map coords for self
@@ -295,7 +299,9 @@ guiRegion.prototype.mouseDrag = function( button, x, y )
       }
       return true;    
     }
-
+	// check focus object first for drag
+	if ( this.OnMouseDrag ( button, x, y, dx, dy ) )
+      return true;
   }
 
   // hit test self
@@ -316,7 +322,7 @@ guiRegion.prototype.mouseDrag = function( button, x, y )
   }
 
   // check self for activity
-  if ( this.OnMouseDrag ( button, cx, cy ) ) {
+  if ( this.OnMouseDrag ( button, cx, cy, dx, dy ) ) {
      return true;
   }     
   return false;
@@ -359,17 +365,14 @@ guiRegion.prototype.OnMouseDown = function( button, x, y )
 {
   return false;
 }
-
 guiRegion.prototype.OnMouseUp = function( button, x, y )
 {
   return false;
 }
-
 guiRegion.prototype.OnMouseDrag = function( button, x, y )
 {
   return false;
 }
-
 guiRegion.prototype.OnMouseMove = function( button, x, y )
 {
   return false;

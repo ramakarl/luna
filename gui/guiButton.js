@@ -6,6 +6,15 @@ function guiButton( name )
   this.prop_flag_move = false;
   this.prop_flag_resize = false;
 
+  // Button type:
+  //  0 - 'spring loaded'.  mousedown -> active, mouseup -> inactive 
+  //  1 - toggle.  mousedown -> !current_state
+  //  2 - toggle.  mouseup -> !current_state
+  //  3 - sticky.  mousedown -> active
+  //  4 - sticky.  mouseup -> active
+  //
+  this.button_type = 0;
+
   // debugging...
   this.uniq = parseInt(128.0*Math.random());
   this.bgColor = "rgba(0," + this.uniq +",0,0.5)";
@@ -16,7 +25,9 @@ function guiButton( name )
   this.image = null;
   this.press_image = null;
 
-  this.button_press = false;
+  this.active_state = false;
+
+  console.log("???!!!", this.active_state);
 
 }
 guiButton.inherits( guiRegion );
@@ -34,13 +45,48 @@ guiButton.prototype.setPressImage = function( img ) {
 }
 
 guiButton.prototype.OnMouseDown = function( button, x, y ) {
-  this.button_press = true;
-  return false;
+
+  if (this.button_type==0) {
+
+    console.log("cp0");
+
+    this.active_state = true;
+  }
+
+  /*
+  else if (this.button_type==1) {
+    this.active_state  = !this.active_state;
+  } else if (this.button_type==3) {
+    this.active_state = true;
+  }
+
+  console.log("????", this.active_state);
+  */
+
+  return true;
 }
 
 guiButton.prototype.OnMouseUp = function( button, x, y ) {
-  this.button_press = false;
-  return false;
+
+  if (this.button_type==0) {
+
+    console.log("cp1", this.name);
+
+    this.active_state= false;
+
+  }
+ 
+  /*
+  else if (this.button_type==2) {
+    this.active_state = !this.active_state;
+  } else if (this.button_type==4) {
+    this.active_state = false;
+  }
+
+  console.log("????", this.active_state);
+  */
+
+  return true;
 }
 
 /*
@@ -79,17 +125,18 @@ guiButton.prototype.doubleClick = function(ev, x, y)
 guiButton.prototype.draw = function()
 {
 
+  //console.log("0??>>", this.name, this.active_state);
+
+
   if (!this.image) {
-    if (this.button_press) {
+    if (this.active_state) {
       g_painter.drawFill( 0, 0, this.width, this.height, this.press_color );
     } else {
       g_painter.drawFill( 0, 0, this.width, this.height, this.bgColor );
     }
   } else {
-    // top left of self is 0,0
-
-    if (this.button_press) {
-      if (this.press_image ) {
+    if (this.active_state) {
+      if (this.press_image) {
         g_painter.drawImage( this.press_image , 0, 0, this.width, this.height );
       } else {
         //highlight image
@@ -100,6 +147,7 @@ guiButton.prototype.draw = function()
       g_painter.drawImage( this.image, 0, 0, this.width, this.height );
     }
   }
+
 
 }
 
