@@ -2,24 +2,22 @@
 GUI elements
 ============
 
+  - region
   - button
     * ~~button (spring load)~~
     * button (toggle)
-  - colorbar
-  - directoryline
-  - dropdown
-  - entrybox
-  - entryline
-  - filebrowser
-  - listbox
-  - propertybox
-  - region
   - scrollbar
+  - toolbar
+  - dropdown
+  - listbox
+  - textbox, textarea, entrybox, entryline
   - slider
   - spinner
-  - textarea
-  - textbox
-  - toolbar
+
+  - colorbar
+  - directoryline
+  - filebrowser
+  - propertybox
   - render2d
   - render3d
 
@@ -30,3 +28,12 @@ Top level design
   - luna_scene - storage and management of GUI tree
   - luna_message - message 'queue' for GUI objects
   - luna_input - GUI input handling
+
+
+Events
+======
+
+  - Parent
+  - Named destination
+  - Custom callback
+  - System callback
