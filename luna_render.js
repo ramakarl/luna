@@ -1012,10 +1012,10 @@ lunaRender.prototype.drawFillRect = function( x, y, w, h, fill_color, line_width
   var ctx = this.context;
   ctx.beginPath();
   ctx.rect( x, y, w, h );
-  ctx.fillStyle = border_color;
+  ctx.fillStyle = fill_color;
 
   ctx.lineWidth = line_width;
-  ctx.strokeStyle = line_color;
+  ctx.strokeStyle = border_color;
 
   ctx.fill();
   ctx.stroke();

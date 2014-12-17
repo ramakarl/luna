@@ -108,7 +108,11 @@ guiRegion.prototype.move = function ( x, y )
 
 guiRegion.prototype.draw = function()
 {
-   g_painter.drawFill( 0, 0, this.width, this.height, this.bgColor );
+  //g_painter.drawFill( 0, 0, this.width, this.height, this.bgColor );
+  //g_painter.drawRect( 0, 0, this.width, this.height, 3, this.bgColor );
+
+  var c = "rgba(128,110,141,0.9)";
+  g_painter.drawFillRect( 0, 0, this.width, this.height, this.bgColor, 2, c );
 }
 
 guiRegion.prototype.drawChildren = function()
