@@ -68,6 +68,7 @@ guiToolbar.prototype.addTool = function( name, image, pressImage )
   var nh = 2*this.margin + this.tool_height ;
 
   var button = new guiButton( name );
+  button.setType(1);
   button.setBackClr( 0.2, 0.2, 0.2, 0.3 );
   button.setSize( nx, ny, this.tool_width, this.tool_height );
   if (image) {

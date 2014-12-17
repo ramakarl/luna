@@ -28,11 +28,12 @@ function guiButton( name )
   this.press_image = null;
 
   this.active_state = false;
-
-  console.log("???!!!", this.active_state);
-
 }
 guiButton.inherits( guiRegion );
+
+guiButton.prototype.setType = function( typ ) {
+  this.button_type = typ;
+}
 
 guiButton.prototype.setImage = function( img ) {
   this.image = img;
@@ -49,21 +50,12 @@ guiButton.prototype.setPressImage = function( img ) {
 guiButton.prototype.OnMouseDown = function( button, x, y ) {
 
   if (this.button_type==0) {
-
-    console.log("cp0");
-
     this.active_state = true;
-  }
-
-  /*
-  else if (this.button_type==1) {
+  } else if (this.button_type==1) {
     this.active_state  = !this.active_state;
   } else if (this.button_type==3) {
     this.active_state = true;
   }
-
-  console.log("????", this.active_state);
-  */
 
   return true;
 }
@@ -71,22 +63,12 @@ guiButton.prototype.OnMouseDown = function( button, x, y ) {
 guiButton.prototype.OnMouseUp = function( button, x, y ) {
 
   if (this.button_type==0) {
-
-    console.log("cp1", this.name);
-
     this.active_state= false;
-
-  }
- 
-  /*
-  else if (this.button_type==2) {
+  } else if (this.button_type==2) {
     this.active_state = !this.active_state;
   } else if (this.button_type==4) {
-    this.active_state = false;
+    this.active_state = true;
   }
-
-  console.log("????", this.active_state);
-  */
 
   return true;
 }
