@@ -211,11 +211,11 @@ guiRegion.prototype.mouseUp = function( button, x, y )
 {
   if (!this.visible) return false;
 
-  if ( g_scene.eFocus == this ) {    
+  if ( g_scene.eFocus != null ) {    
     // clear edit state (move or resize)
-	g_scene.eMode = 0;    
-	// check focus object first for drag
-	if ( this.OnMouseUp ( button, x, y ) )
+    g_scene.eMode = 0;    
+    // check focus object first for drag
+    if ( g_scene.eFocus.OnMouseUp ( button, x, y ) )
       return true;
   }
   // hit test self
@@ -226,14 +226,19 @@ guiRegion.prototype.mouseUp = function( button, x, y )
   var cx = x + this.scrollx;
   var cy = y + this.scrolly;
 
-  // recursive check children
+// recursive check children
   var child = null;
+  var adjx, adjy;
   for (var ind in this.guiChildren ) { 
     child = this.guiChildren[ind];
-    if ( child.mouseUp ( button, cx - child.x, cy - child.y ) ) {
-      return true;
+    if ( this.hasParent(g_scene.eFocus, child) ) {     
+     adjx = 0; adjy = 0;
+     if ( child.bOverlay == true ) { adjx=this.scrollx; adjy=this.scrolly; }
+     if ( child.mouseUp( button, cx -child.x - adjx, cy -child.y - adjy ) ) 
+       return true;
     }
   }
+
   // check self for activity
   if ( this.OnMouseUp ( button, cx, cy ) ) {
      return true;
