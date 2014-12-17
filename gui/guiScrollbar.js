@@ -26,10 +26,10 @@ guiScrollbar.prototype.updatePos = function()
 {
   // map value to bar position  
   this.full = this.width;
-  var u = (this.value-this.value_min) / (this.value_max-this.value_min);  
-  console.log ( " "+ this.pos_max + "  " + this.height );
-  this.pos_min = this.full + u * this.height 
-  this.pos_max = this.pos_min + (this.value_view*this.height / (this.value_max-this.value_min));  
+  var u = (this.value-this.value_min) / (this.value_max-this.value_min);    
+  var handlesize = (this.value_view*this.height) / (this.value_max-this.value_min);
+  this.pos_min = this.full + u * (this.height-this.full*2-handlesize)
+  this.pos_max = this.pos_min + handlesize;  
 }
 
 guiScrollbar.prototype.OnMouseDown = function( button, x, y )
@@ -42,8 +42,7 @@ guiScrollbar.prototype.OnMouseDown = function( button, x, y )
 guiScrollbar.prototype.OnMouseDrag = function( button, x, y )
 {
   // start scrollbar drag  
-  var u = (y-this.full) / this.height; 
-  console.log ( " "+ u );
+  var u = (y-this.full) / (this.height-this.full*2);   
   this.value = this.value_min + u * (this.value_max-this.value_min);
   if ( this.value < this.value_min ) this.value = this.value_min;
   if ( this.value > this.value_max ) this.value = this.value_max;

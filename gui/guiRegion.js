@@ -324,8 +324,7 @@ guiRegion.prototype.mouseDrag = function( button, x, y )
       obj.setSize ( obj.x, obj.y, g_scene.eStart[2] + obj.x + dx, g_scene.eStart[3] + obj.y + dy );      
       return true;    
     }
-	// check focus object first for drag
-	if ( this.OnMouseDrag ( button, x+this.scrollx, y+this.scrolly ) )
+	  if ( this.OnMouseDrag ( button, x, y ) )
       return true;
   }
 
@@ -339,15 +338,18 @@ guiRegion.prototype.mouseDrag = function( button, x, y )
 
   // recursive check children
   var child = null;
+  var adjx, adjy;
   for (var ind in this.guiChildren ) { 
     child = this.guiChildren[ind];
-    if ( this.hasParent(g_scene.eFocus, child) ) {
-	  if ( child.mouseDrag ( button, cx - child.x, cy - child.y ) ) 
+    if ( this.hasParent(g_scene.eFocus, child) ) {     
+     adjx = 0; adjy = 0;
+     if ( child.bOverlay == true ) { adjx=this.scrollx; adjy=this.scrolly; }
+	   if ( child.mouseDrag ( button, cx -child.x - adjx, cy -child.y - adjy ) ) 
         return true;
     }
   }
 
-  // check self for activity
+  // check self for activity  
   if ( this.OnMouseDrag ( button, cx, cy ) ) {
      return true;
   }     
