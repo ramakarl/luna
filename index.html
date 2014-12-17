@@ -31,6 +31,7 @@
     <script src='gui/guiAction.js'></script>
 
     <script src='gui/guiButton.js'></script>
+    <script src='gui/guiToolbar.js'></script>
 
     <script src='tools/toolNav.js'></script>
 
@@ -119,7 +120,7 @@
 
       var test_button = new guiButton( "test:button" );
       test_button.setSize ( 10, 40, 32, 32 );
-      testa.addChild ( test_button );
+      //testa.addChild ( test_button );
 
       var img = new Image();
       img.src = "img/ghost_alt2_u.png";
@@ -135,6 +136,14 @@
         console.log("loading image", img_d );
         test_button.setPressImage( img_d );
       }
+
+
+      var test_tool = new guiToolbar( "tool" );
+      test_tool.setSize( 100, 100, 20, 20 );
+      test_tool.addTool( "tool:a", img, img_d );
+      test_tool.addTool( "tool:b", img, img_d );
+      //test_tool.addTool( "tool:c", img, img_d );
+      g_root.addChild( test_tool );
 
       requestAnimationFrame( loop, 1 );     
       
