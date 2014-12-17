@@ -3,6 +3,9 @@ function guiButton( name )
 {
   this.constructor(name);
 
+  this.prop_flag_move = false;
+  this.prop_flag_resize = false;
+
   // debugging...
   this.uniq = parseInt(128.0*Math.random());
   this.bgColor = "rgba(0," + this.uniq +",0,0.5)";

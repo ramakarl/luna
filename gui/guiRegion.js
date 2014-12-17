@@ -14,6 +14,12 @@ function guiRegion( name )
   this.bgColor = "rgba(230,230,255, 0.8)";
   this.name = name;   
 
+  // Property flags
+  //
+  this.prop_flag_move = true;
+  this.prop_flag_resize = true;
+
+
   this.transform       = [ [ 1, 0, 0], [0, 1, 0], [0, 0, 1] ];
   this.world_transform = [ [ 1, 0, 0], [0, 1, 0], [0, 0, 1] ];
   this.inv_transform   = [ [ 1, 0, 0], [0, 1, 0], [0, 0, 1] ];
@@ -211,22 +217,30 @@ guiRegion.prototype.mouseDown = function( button, x, y )
   if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
     return false;
 
-  // check moving - hit test title
-  if ( y < 15 ) {    
-    g_scene.eMode = 1;          // moving mode
-    g_scene.eStart = [ x+this.x, y+this.y, this.x, this.y ];    // start of move (in parent coordinates)
-    g_scene.setFocus ( this );    
-    return true; 
-  } 
-  // check resize
-  console.log ( "hit: "+ this.name+ ": "+x+", "+y +"  "+this.width +"," + this.height);
-  if ( x > this.width -25 && y > this.height-25 ) {
+  if (this.prop_flag_move) {
 
-    g_scene.eMode = 2;          // moving mode
-    g_scene.eStart = [ x+this.x, y+this.y, this.width, this.height ];    // start of resize (in parent coordinates)
-    g_scene.setFocus ( this );    
-    return true; 
-  } 
+    // check moving - hit test title
+    if ( y < 15 ) {    
+      g_scene.eMode = 1;          // moving mode
+      g_scene.eStart = [ x+this.x, y+this.y, this.x, this.y ];    // start of move (in parent coordinates)
+      g_scene.setFocus ( this );    
+      return true; 
+    } 
+  }
+
+
+  if (this.prop_flag_resize) {
+    // check resize
+    console.log ( "hit: "+ this.name+ ": "+x+", "+y +"  "+this.width +"," + this.height);
+    if ( x > this.width -25 && y > this.height-25 ) {
+
+      g_scene.eMode = 2;          // moving mode
+      g_scene.eStart = [ x+this.x, y+this.y, this.width, this.height ];    // start of resize (in parent coordinates)
+      g_scene.setFocus ( this );    
+      return true; 
+    } 
+
+  }
 
  // map coords for self
   var cx = x + 0;   // scrolling
@@ -260,16 +274,23 @@ guiRegion.prototype.mouseDrag = function( button, x, y )
 
   if ( g_scene.eFocus == this ) {    
     var obj = g_scene.eFocus;    
+
     // if moving..
     if ( g_scene.eMode == 1 ) {      
-      obj.setSize ( g_scene.eStart[2] + obj.x + dx, g_scene.eStart[3] + obj.y + dy, obj.width, obj.height );
+      if (this.prop_flag_move) {
+        obj.setSize ( g_scene.eStart[2] + obj.x + dx, g_scene.eStart[3] + obj.y + dy, obj.width, obj.height );
+      }
       return true;    
     }
+
     // if resizing
     if ( g_scene.eMode == 2 ) {            
-      obj.setSize ( obj.x, obj.y, g_scene.eStart[2] + obj.x + dx, g_scene.eStart[3] + obj.y + dy );
+      if (this.prop_flag_resize) {
+        obj.setSize ( obj.x, obj.y, g_scene.eStart[2] + obj.x + dx, g_scene.eStart[3] + obj.y + dy );
+      }
       return true;    
     }
+
   }
 
   // hit test self
