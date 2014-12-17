@@ -7,6 +7,8 @@ function guiRegion( name )
   this.y = 0;
   this.bClip = false;  
   this.bOverlay = false;
+  this.bBorder = true;
+  this.bBackground = true;
   this.scrollx=0;	// scrolling variables
   this.scrolly=0;
   this.width = 40;
@@ -121,10 +123,10 @@ guiRegion.prototype.drawChildren = function( sx, sy )
 {
   M = this.world_transform;  
   if ( this.bOverlay ) { sx=0; sy=0; }
-  
+
   g_scene.ctx.save();
-  
-  // Clipping	
+
+  // Clipping
   if ( this.bClip ) {      
     g_scene.ctx.setTransform( M[0][0], M[1][0], M[0][1], M[1][1], M[0][2]-sx, M[1][2]-sy);     
     g_scene.ctx.beginPath();
@@ -141,24 +143,32 @@ guiRegion.prototype.drawChildren = function( sx, sy )
   // Draw self 
   g_scene.ctx.setTransform( M[0][0], M[1][0], M[0][1], M[1][1], M[0][2]-this.scrollx-sx, M[1][2]-this.scrolly-sy);  
   this.draw ();  
-  
+
   // Draw children
   var child = null;
   for (var ind in this.guiChildren ) {
     child = this.guiChildren[ind];
-    if (child.visible) {	  
-	  // background
-      g_scene.ctx.fillStyle = child.bgColor;
-      g_scene.ctx.fillRect ( child.x, child.y, child.width, child.height );
-	  // child
-      child.drawChildren( this.scrollx, this.scrolly );		
-	  // border	  
-	  if ( !child.bOverlay ) {
-		  g_scene.ctx.beginPath();
-		  g_scene.ctx.rect ( child.x, child.y, child.width, child.height );
-		  g_scene.ctx.stroke ();
-		  g_scene.ctx.closePath();
-	  }
+    if (child.visible) {
+
+      // background
+      if (child.bBackground) {
+        g_scene.ctx.fillStyle = child.bgColor;
+        g_scene.ctx.fillRect ( child.x, child.y, child.width, child.height );
+      }
+
+      // child
+      child.drawChildren( this.scrollx, this.scrolly );
+
+      // border
+      if ( !child.bOverlay ) {
+
+        if (child.bBorder) {
+          g_scene.ctx.beginPath();
+          g_scene.ctx.rect ( child.x, child.y, child.width, child.height );
+          g_scene.ctx.stroke ();
+          g_scene.ctx.closePath();
+        }
+      }
     }
   }   
  

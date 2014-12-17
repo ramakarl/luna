@@ -5,6 +5,8 @@ function guiButton( name )
 
   this.prop_flag_move = false;
   this.prop_flag_resize = false;
+  this.bBackground = false;
+  this.bBorder = false;
 
   // Button type:
   //  0 - 'spring loaded'.  mousedown -> active, mouseup -> inactive 
