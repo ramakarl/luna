@@ -197,26 +197,35 @@ guiRegion.prototype.hitTest = function(x, y)
 
 guiRegion.prototype.mouseUp = function( button, x, y )
 {
-  g_scene.eMode = 0;
+  if (!this.visible) return false;
 
-  var cx = x + 0;   // scrolling
-  var cy = y + 0;
+  if ( g_scene.eFocus == this ) {    
+    // clear edit state (move or resize)
+	g_scene.eMode = 0;    
+	// check focus object first for drag
+	if ( this.OnMouseUp ( button, x, y ) )
+      return true;
+  }
+  // hit test self
+  if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
+    return false;
+
+  // map coords for self
+  var cx = x + this.scrollx;
+  var cy = y + this.scrolly;
 
   // recursive check children
   var child = null;
-  for (var ind in this.guiChildren ) {     
+  for (var ind in this.guiChildren ) { 
     child = this.guiChildren[ind];
-    if ( child.mouseUp ( button, cx - child.x, cy - child.y ) ) {      
+    if ( child.mouseUp ( button, cx - child.x, cy - child.y ) ) {
       return true;
     }
   }
-
-
   // check self for activity
-  if ( this.OnMouseUp( button, cx, cy ) ) {
+  if ( this.OnMouseUp ( button, cx, cy ) ) {
      return true;
-  }
-
+  }     
   return false;
 }
 
@@ -252,8 +261,8 @@ guiRegion.prototype.mouseDown = function( button, x, y )
   }
 
  // map coords for self
-  var cx = x + 0;   // scrolling
-  var cy = y + 0;
+  var cx = x + this.scrollx;   // scrolling
+  var cy = y + this.scrolly;
 
   // recursive check children
   var child = null;
@@ -273,6 +282,16 @@ guiRegion.prototype.mouseDown = function( button, x, y )
   return false;
 }
 
+guiRegion.prototype.hasParent = function ( child, target )
+{
+  if ( child == null || child==target ) return true;
+  var curr = child.parent;
+  while ( curr != null ) {
+    if (curr==target) return true;
+	curr = curr.parent;
+  }
+  return false;  
+}
 
 guiRegion.prototype.mouseDrag = function( button, x, y )
 {
@@ -285,22 +304,18 @@ guiRegion.prototype.mouseDrag = function( button, x, y )
     var obj = g_scene.eFocus;    
 
     // if moving..
-    if ( g_scene.eMode == 1 ) {      
-      if (this.prop_flag_move) {
-        obj.setSize ( g_scene.eStart[2] + obj.x + dx, g_scene.eStart[3] + obj.y + dy, obj.width, obj.height );
-      }
+    if ( g_scene.eMode == 1 ) {            
+      obj.setSize ( g_scene.eStart[2] + obj.x + dx, g_scene.eStart[3] + obj.y + dy, obj.width, obj.height );      
       return true;    
     }
 
     // if resizing
-    if ( g_scene.eMode == 2 ) {            
-      if (this.prop_flag_resize) {
-        obj.setSize ( obj.x, obj.y, g_scene.eStart[2] + obj.x + dx, g_scene.eStart[3] + obj.y + dy );
-      }
+    if ( g_scene.eMode == 2 ) {                
+      obj.setSize ( obj.x, obj.y, g_scene.eStart[2] + obj.x + dx, g_scene.eStart[3] + obj.y + dy );      
       return true;    
     }
 	// check focus object first for drag
-	if ( this.OnMouseDrag ( button, x, y, dx, dy ) )
+	if ( this.OnMouseDrag ( button, x, y ) )
       return true;
   }
 
@@ -309,20 +324,21 @@ guiRegion.prototype.mouseDrag = function( button, x, y )
     return false;
 
   // map coords for self
-  var cx = x + 0;
-  var cy = y + 0;
+  var cx = x + this.scrollx;
+  var cy = y + this.scrolly;
 
   // recursive check children
   var child = null;
   for (var ind in this.guiChildren ) { 
     child = this.guiChildren[ind];
-    if ( child.mouseDrag ( button, cx - child.x, cy - child.y ) ) {
-      return true;
+    if ( this.hasParent(g_scene.eFocus, child) ) {
+	  if ( child.mouseDrag ( button, cx - child.x, cy - child.y ) ) 
+        return true;
     }
   }
 
   // check self for activity
-  if ( this.OnMouseDrag ( button, cx, cy, dx, dy ) ) {
+  if ( this.OnMouseDrag ( button, cx, cy ) ) {
      return true;
   }     
   return false;

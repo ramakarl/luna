@@ -37,7 +37,7 @@ guiScrollbar.prototype.OnMouseDown = function( button, x, y )
   this.value_start = this.value;
   return true;
 }
-guiScrollbar.prototype.OnMouseDrag = function( button, x, y, dx, dy )
+guiScrollbar.prototype.OnMouseDrag = function( button, x, y )
 {
   // start scrollbar drag  
   this.value = this.value_start + ((y-this.pos_start) * (this.value_max-this.value_min) / this.height); 
