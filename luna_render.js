@@ -992,12 +992,21 @@ lunaRender.prototype.drawPolygon = function( path,  x, y, color, fill, line_widt
 lunaRender.prototype.drawFill = function( x, y, w, h, fill_color )
 {
   var ctx = this.context;
-  ctx.beginPath();
-  ctx.rect( x, y, w, h );
   ctx.fillStyle = fill_color;
-  ctx.fill();
-  ctx.stroke();
+  ctx.fillRect ( x, y, w, h);  
 }
+lunaRender.prototype.drawTri = function( x1, y1, x2, y2, x3, y3, fill_color )
+{
+  var ctx = this.context;  
+  ctx.fillStyle = fill_color;
+  ctx.beginPath ();
+  ctx.moveTo ( x1, y1 );
+  ctx.lineTo ( x2, y2 );
+  ctx.lineTo ( x3, y3 );
+  ctx.closePath ();
+  ctx.fill ();
+}
+
 
 lunaRender.prototype.drawImage = function( img, x, y,
                                            w, h,

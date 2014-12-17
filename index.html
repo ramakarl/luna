@@ -100,13 +100,13 @@
 
       // TESTING
       var testa = new guiRegion ( "a" );
-      testa.setSize ( 80, 20, 150, 200 );
+      testa.setSize ( 150, 20, 150, 200 );
       testa.setBackClr ( 1, 0, 0, 0.2 );
       testa.setClip ( true );
       g_root.addChild ( testa );
 
       var testb = new guiRegion ( "b" );
-      testb.setSize ( 30, 60, 150, 100 );
+      testb.setSize ( 30, 60, 100, 100 );
       testb.setBackClr ( 0, 1, 0, 0.2 );
       testb.setClip ( true );
       g_root.addChild ( testb );
@@ -117,18 +117,21 @@
       testc.setClip ( true );
       testa.addChild ( testc );
 
+	  var scroll = new guiScrollbar ( "d" );	  
+	  scroll.setSize ( 0, 0, 10, 200 );
+	  scroll.setRange ( 0, 1000 );	  
+	  testa.addChild ( scroll );  
+	  
       var img = new Image();
       img.src = "img/ghost_alt2.png";
       img.onload = function() {
-
         console.log("loading image", img);
-
         var test_button = new guiButton( "test:button" );
         test_button.setImage( img );
         test_button.setSize ( 10, 40, img.width, img.height );        
         testa.addChild ( test_button );
-
       }
+	  
 
       requestAnimationFrame( loop, 1 );     
       
