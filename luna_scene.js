@@ -21,8 +21,9 @@ lunaScene.prototype.setCallback = function ( callbk )
 }
 
 
-function Event( name, type, dest, callbk )
+function Event( obj, name, type, dest, callbk )
 {
+  this.obj = obj;
   this.name = name;
   this.type = type;
   this.dest = dest;
@@ -48,16 +49,15 @@ Event.prototype.retrieveStr = function ( val )
   return String( this.payload[ this.pos++] );
 }
 
-
-lunaScene.prototype.sendEvent = function( obj, e )
+function sendEvent ( e )
 {
-  console.log ( "send: " + obj.name +" " + e.name );
+  // console.log ( "send: " + e.name + " from " + e.obj.name );
 
   // Luna event passing
   // Rule 1 - Try parent first
-  if ( obj.parent != null ) {     
+  if ( e.obj != null && e.obj.parent != null ) {     
      e.startRead ();
-     if ( obj.parent.OnEvent( e ) ) 
+     if ( e.obj.parent.OnEvent( e ) ) 
         return true;
   }
   // Rule 2 - Try target name
@@ -79,7 +79,7 @@ lunaScene.prototype.sendEvent = function( obj, e )
   return false;
 }
 
-lunaScene.prototype.createEvent = function ( name, type, dest, callbk )
+function createEvent ( name, type, dest, callbk )
 {
   var e = new Event( name, type, dest, callbk );
   return e;  
