@@ -14,6 +14,9 @@ function guiRegion( name )
   this.bgColor = "rgba(230,230,255, 0.8)";
   this.name = name;   
 
+  this.window_head_size = 15;
+  this.window_apron_size = 25;
+
   // Property flags
   //
   this.prop_flag_move = true;
@@ -220,7 +223,8 @@ guiRegion.prototype.mouseDown = function( button, x, y )
   if (this.prop_flag_move) {
 
     // check moving - hit test title
-    if ( y < 15 ) {    
+    //if ( y < 15 ) {    
+    if ( y < this.window_head_size ) {    
       g_scene.eMode = 1;          // moving mode
       g_scene.eStart = [ x+this.x, y+this.y, this.x, this.y ];    // start of move (in parent coordinates)
       g_scene.setFocus ( this );    
@@ -232,7 +236,8 @@ guiRegion.prototype.mouseDown = function( button, x, y )
   if (this.prop_flag_resize) {
     // check resize
     console.log ( "hit: "+ this.name+ ": "+x+", "+y +"  "+this.width +"," + this.height);
-    if ( x > this.width -25 && y > this.height-25 ) {
+    //if ( x > this.width -25 && y > this.height-25 ) {
+    if ( x > this.width -this.window_apron_size && y > this.height-this.window_apron_size) {
 
       g_scene.eMode = 2;          // moving mode
       g_scene.eStart = [ x+this.x, y+this.y, this.width, this.height ];    // start of resize (in parent coordinates)
