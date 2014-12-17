@@ -48,11 +48,13 @@ guiRegion.prototype.setClip = function ( b )
   this.bClip = b;
 }
 
-guiRegion.prototype.handleEvent = function(ev)
+guiRegion.prototype.OnEvent = function( e )
 {
-  if (this.parent)
-    if ("handleEvent" in this.parent)
-      this.parent.handleEvent(ev);
+   if ( e.name=="scroll" ) {
+      this.scrolly = e.retrieveInt();
+      return true;
+   }
+   return false;
 }
 
 guiRegion.prototype.setSize = function( x1, y1, w, h )
