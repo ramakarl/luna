@@ -144,35 +144,29 @@ guiRegion.prototype.drawChildren = function( sx, sy )
 
   // Draw self 
   g_scene.ctx.setTransform( M[0][0], M[1][0], M[0][1], M[1][1], M[0][2]-this.scrollx-sx, M[1][2]-this.scrolly-sy);  
+  if (this.bBackground) {
+    g_scene.ctx.fillStyle = this.bgColor;
+    g_scene.ctx.fillRect ( this.scrollx, this.scrolly, this.width, this.height );
+  }
   this.draw ();  
 
   // Draw children
   var child = null;
   for (var ind in this.guiChildren ) {
     child = this.guiChildren[ind];
-    if (child.visible) {
-
-      // background
-      if (child.bBackground) {
-        g_scene.ctx.fillStyle = child.bgColor;
-        g_scene.ctx.fillRect ( child.x, child.y, child.width, child.height );
-      }
-
-      // child
-      child.drawChildren( this.scrollx, this.scrolly );
-
-      // border
-      if ( !child.bOverlay ) {
-
-        if (child.bBorder) {
-          g_scene.ctx.beginPath();
-          g_scene.ctx.rect ( child.x, child.y, child.width, child.height );
-          g_scene.ctx.stroke ();
-          g_scene.ctx.closePath();
-        }
-      }
+    if (child.visible) 
+      child.drawChildren( this.scrollx, this.scrolly );    
+  }
+  // Draw border
+  if ( !this.bOverlay ) {
+    if (this.bBorder) {
+      g_scene.ctx.lineWidth = 1;
+      g_scene.ctx.beginPath();
+      g_scene.ctx.rect ( this.scrollx, this.scrolly, this.width, this.height );
+      g_scene.ctx.stroke ();
+      g_scene.ctx.closePath();
     }
-  }   
+  }
  
   g_scene.ctx.restore();
 }
