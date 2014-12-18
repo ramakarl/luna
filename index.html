@@ -146,7 +146,7 @@
 
 
       var test_tool = new guiToolbar( "tool" );
-      test_tool.setSize( 100, 100, 20, 20 );
+      test_tool.setSize( 100, 300, 20, 20 );
       test_tool.addTool( "tool:a", img, img_d );
       test_tool.addTool( "tool:b", img, img_d );
       //test_tool.addTool( "tool:c", img, img_d );
@@ -160,6 +160,11 @@
       var test_spinner = new guiSpinner( "spinner" );
       test_spinner.setSize( 400, 250, 100, 100 );
       g_root.addChild( test_spinner );
+
+      var test_spinner2 = new guiSpinner( "spinner2" );
+      test_spinner2.setSize( 400, 350, 100, 100 );
+      test_spinner2.setImage(img);
+      g_root.addChild( test_spinner2 );
 
       requestAnimationFrame( loop, 1 );     
       

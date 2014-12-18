@@ -11,9 +11,22 @@ function guiSpinner( name )
   this.cursorLong = 21;
   this.offset = 30;
 
+  this.image = null;
+  this.image_sx = 32;
+  this.image_sy = 32;
+
   this.value = 0.0;
 }
 guiSpinner.inherits( guiRegion );
+
+guiSpinner.prototype.setImage = function( img ) {
+  this.image = img;
+}
+
+guiSpinner.prototype.setImageSize = function( sx, sy) {
+  this.image_sx = sx;
+  this.image_sy = sy;
+}
 
 guiSpinner.prototype.setSize = function( x, y, w, h ) {
   this.x = x;
@@ -68,8 +81,17 @@ guiSpinner.prototype.draw = function() {
 
   g_painter.translate(cx,cy); 
   g_painter.rotate( this.value );
-  g_painter.drawFill( -dx - this.offset, -dy, this.cursorLong, this.cursorShort, this.cursorColor );
-  g_painter.drawFill( -3,-3, 6,6, this.cursorColor );
+
+  if (this.image) {
+    dx = Math.floor( this.image_sx/2 );
+    dy = Math.floor( this.image_sy/2 );
+
+    g_painter.drawImage( this.image, -dx, -dy, this.image_sx, this.image_sy);
+  } else {
+    g_painter.drawFill( -dx - this.offset, -dy, this.cursorLong, this.cursorShort, this.cursorColor );
+    g_painter.drawFill( -3,-3, 6,6, this.cursorColor );
+  }
+
   g_painter.rotate( -this.value );
   g_painter.translate(-cx,-cy); 
 
