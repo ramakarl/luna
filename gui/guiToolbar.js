@@ -8,8 +8,6 @@ function guiToolbar( name )
   this.tool_height = 32;
   this.margin = 10;
 
-  // array of [width, height]
-  this.tool = []
   this.tool_id_bp = {};
 }
 guiToolbar.inherits( guiRegion );
@@ -30,9 +28,9 @@ guiToolbar.prototype.OnEvent = function( ev )
 
       var ind = this.tool_id_bp[ev.obj.name];
       var v = ev.retrieve();
-      for (var x=0; x<this.tool.length; x++) {
+      for (var x=0; x<this.guiChildren.length; x++) {
         if (x == ind) { continue; }
-        this.tool[x].active_state = false;
+        this.guiChildren[x].active_state = false;
       }
 
       return true;
@@ -75,7 +73,7 @@ guiToolbar.prototype.setToolSize = function( w, h ) {
 
 guiToolbar.prototype.addTool = function( name, image, pressImage )
 {
-  var n = this.tool.length;
+  var n = this.guiChildren.length;
   var nx = this.margin + n*this.tool_width;
   var ny = this.margin;
 
@@ -94,15 +92,9 @@ guiToolbar.prototype.addTool = function( name, image, pressImage )
     button.setPressImage( pressImage );
   }
 
-  //this.tool_state.push( false );
-  //this.tool_pos.push( [ nx, ny ] );
-  //this.tool_size.push( [ this.tool_width, this.tool_height] );
-  this.tool_id_bp[name] = this.tool.length;
-  this.tool.push( button );
+  this.tool_id_bp[name] = this.guiChildren.length;
 
-  this.guiChildren.push ( button );
-  button.parent = this;
-  button.setWorldMatrix();
+  this.addChild( button );
 
   this.setSize( this.x, this.y, nw, nh );
 
