@@ -12,8 +12,8 @@ GUI elements
   - dropdown
   - listbox
   - textbox, textarea, entrybox, entryline
-  - slider
-  - spinner
+  - ~~slider~~
+  - ~~spinner~~
 
   - colorbar
   - directoryline
