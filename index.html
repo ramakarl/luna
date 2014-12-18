@@ -32,6 +32,7 @@
 
     <script src='gui/guiButton.js'></script>
     <script src='gui/guiToolbar.js'></script>
+    <script src='gui/guiSlider.js'></script>
 
     <script src='tools/toolNav.js'></script>
 
@@ -149,6 +150,11 @@
       test_tool.addTool( "tool:b", img, img_d );
       //test_tool.addTool( "tool:c", img, img_d );
       g_root.addChild( test_tool );
+
+
+      var test_slider = new guiSlider( "slider" );
+      test_slider.setSize( 400, 100, 100, 50 );
+      g_root.addChild( test_slider );
 
       requestAnimationFrame( loop, 1 );     
       
