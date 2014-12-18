@@ -370,13 +370,19 @@ guiRegion.prototype.mouseMove = function( button, x, y )
   if ( x < 0 || y < 0 || x > this.width || y > this.height ) 
 
   // map coords for children  
-  cx = x + this.x;
-  cy = y + this.y;
+  cx = x + this.scrollx;
+  cy = y + this.scrolly;
 
   // recursive check children
+  var child = null;
+  var adjx, adjy;
   for (var ind in this.guiChildren ) { 
-    if ( this.guiChildren[ind].mouseMove ( button, cx, cy ) ) {
-      return true;
+    child = this.guiChildren[ind];
+    if ( this.hasParent(g_scene.eFocus, child) ) {     
+     adjx = 0; adjy = 0;
+     if ( child.bOverlay == true ) { adjx=this.scrollx; adjy=this.scrolly; }
+	   if ( child.mouseMove ( button, cx -child.x - adjx, cy -child.y - adjy ) ) 
+        return true;
     }
   }
 
