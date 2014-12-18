@@ -5,9 +5,10 @@ GUI elements
   - region
   - button
     * ~~button (spring load)~~
-    * button (toggle)
-  - scrollbar
-  - toolbar
+    * ~~button (toggle)~~
+  - ~~scrollbar~~
+  - ~~toolbar~~
+    * still needs some jumble functionality
   - dropdown
   - listbox
   - textbox, textarea, entrybox, entryline
@@ -32,6 +33,8 @@ Top level design
 
 Events
 ======
+
+###  Event Order
 
   - Parent
   - Named destination
