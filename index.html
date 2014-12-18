@@ -33,6 +33,7 @@
     <script src='gui/guiButton.js'></script>
     <script src='gui/guiToolbar.js'></script>
     <script src='gui/guiSlider.js'></script>
+    <script src='gui/guiSpinner.js'></script>
 
     <script src='tools/toolNav.js'></script>
 
@@ -155,6 +156,10 @@
       var test_slider = new guiSlider( "slider" );
       test_slider.setSize( 400, 100, 100, 50 );
       g_root.addChild( test_slider );
+
+      var test_spinner = new guiSpinner( "spinner" );
+      test_spinner.setSize( 400, 250, 100, 100 );
+      g_root.addChild( test_spinner );
 
       requestAnimationFrame( loop, 1 );     
       
