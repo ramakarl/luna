@@ -31,6 +31,20 @@ function guiButton( name )
 }
 guiButton.inherits( guiRegion );
 
+guiButton.prototype.setState = function( state ) {
+  this.active_state = state;
+  var e = createEvent( this, "button", "state", "", null );
+  e.attach( this.active_state );
+  sendEvent( e );
+}
+
+guiButton.prototype.toggleState = function() {
+  this.active_state = !this.active_state;
+  var e = createEvent( this, "button", "state", "", null );
+  e.attach( this.active_state );
+  sendEvent( e );
+}
+
 guiButton.prototype.setType = function( typ ) {
   this.button_type = typ;
 }
@@ -50,11 +64,14 @@ guiButton.prototype.setPressImage = function( img ) {
 guiButton.prototype.OnMouseDown = function( button, x, y ) {
 
   if (this.button_type==0) {
-    this.active_state = true;
+    this.setState(true);
+    //this.active_state = true;
   } else if (this.button_type==1) {
-    this.active_state  = !this.active_state;
+    this.toggleState();
+    //this.active_state  = !this.active_state;
   } else if (this.button_type==3) {
-    this.active_state = true;
+    this.steState(true);
+    //this.active_state = true;
   }
 
   return true;
@@ -63,11 +80,14 @@ guiButton.prototype.OnMouseDown = function( button, x, y ) {
 guiButton.prototype.OnMouseUp = function( button, x, y ) {
 
   if (this.button_type==0) {
-    this.active_state= false;
+    this.setState(false);
+    //this.active_state= false;
   } else if (this.button_type==2) {
-    this.active_state = !this.active_state;
+    this.toggleState();
+    //this.active_state = !this.active_state;
   } else if (this.button_type==4) {
-    this.active_state = true;
+    this.setState(true);
+    //this.active_state = true;
   }
 
   return true;
