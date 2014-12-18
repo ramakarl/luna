@@ -9,12 +9,8 @@ function guiToolbar( name )
   this.margin = 10;
 
   // array of [width, height]
-  this.tool_size = [];
-
-  // array of [x, y]
-  this.tool_pos = [];
-
-  this.tool_state = []
+  this.tool = []
+  this.tool_id_bp = {};
 }
 guiToolbar.inherits( guiRegion );
 
@@ -25,6 +21,25 @@ guiToolbar.prototype.setSize = function( x1, y1, w, h )
   this.width = w;  
   this.height = h;
   this.move ( x1, y1);
+}
+
+guiToolbar.prototype.OnEvent = function( ev )
+{
+  if ( ev.name == "button" ) {
+    if ( ev.obj.name in this.tool_id_bp ) {
+
+      var ind = this.tool_id_bp[ev.obj.name];
+      var v = ev.retrieve();
+      for (var x=0; x<this.tool.length; x++) {
+        if (x == ind) { continue; }
+        this.tool[x].active_state = false;
+      }
+
+      return true;
+    }
+  }
+
+  return false;
 }
 
 // virtual mouse functions 
@@ -60,7 +75,7 @@ guiToolbar.prototype.setToolSize = function( w, h ) {
 
 guiToolbar.prototype.addTool = function( name, image, pressImage )
 {
-  var n = this.tool_state.length;
+  var n = this.tool.length;
   var nx = this.margin + n*this.tool_width;
   var ny = this.margin;
 
@@ -79,9 +94,11 @@ guiToolbar.prototype.addTool = function( name, image, pressImage )
     button.setPressImage( pressImage );
   }
 
-  this.tool_state.push( false );
-  this.tool_pos.push( [ nx, ny ] );
-  this.tool_size.push( [ this.tool_width, this.tool_height] );
+  //this.tool_state.push( false );
+  //this.tool_pos.push( [ nx, ny ] );
+  //this.tool_size.push( [ this.tool_width, this.tool_height] );
+  this.tool_id_bp[name] = this.tool.length;
+  this.tool.push( button );
 
   this.guiChildren.push ( button );
   button.parent = this;

@@ -49,7 +49,7 @@ guiScrollbar.prototype.OnMouseDrag = function( button, x, y )
   this.updatePos ();  
 
   // Create and send scroll event
-  e = createEvent ( this, "scroll", "mdrag", "", null )
+  var e = createEvent ( this, "scroll", "mdrag", "", null );
   e.attach ( this.value );
   sendEvent ( e );
 

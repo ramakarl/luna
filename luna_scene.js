@@ -31,19 +31,28 @@ function Event( obj, name, type, dest, callbk )
   this.payload = [];
   this.pos = -1;
 }
+
 Event.prototype.attach = function ( val )
 {
   this.payload.push ( val );
   this.pos++;
 }
+
 Event.prototype.startRead = function ()
 {
   this.pos = 0;
 }
+
+Event.prototype.retrieve = function ( val )
+{
+  return this.payload[ this.pos++];
+}
+
 Event.prototype.retrieveInt = function ( val )
 {
   return Number( this.payload[ this.pos++] );
 }
+
 Event.prototype.retrieveStr = function ( val )
 {
   return String( this.payload[ this.pos++] );
