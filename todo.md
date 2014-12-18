@@ -9,6 +9,7 @@ GUI elements
   - ~~scrollbar~~
   - ~~toolbar~~
     * still needs some jumble functionality
+  - treeview
   - dropdown
   - listbox
   - textbox, textarea, entrybox, entryline

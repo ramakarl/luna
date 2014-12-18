@@ -48,7 +48,7 @@ guiSlider.prototype.OnMouseDown = function( button, x, y )
   if      (this.value < 0) { this.value = 0; }
   else if (this.value > 1) { this.value = 1; }
 
-  var e = createEvent( this, "slider", "mdown", "", null );
+  var e = createEvent( this, "slider", "mdown", "", this.eventCallback);
   e.attach( this.value );
   sendEvent( e );
 
@@ -72,7 +72,7 @@ guiSlider.prototype.OnMouseDrag = function( button, x, y )
   else if (u>1) { this.value = 1.0; }
   else          { this.value = u; }
 
-  var e = createEvent( this, "slider", "mdrag", "", null );
+  var e = createEvent( this, "slider", "mdown", "", this.eventCallback);
   e.attach( this.value );
   sendEvent( e );
 

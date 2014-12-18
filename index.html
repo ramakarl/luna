@@ -11,7 +11,7 @@
 
     var g_img;
     </script>
-    
+
     <script src='lib/jquery.js'></script>
     <script src='lib/jquery.mousewheel.js'/></script>
     <script src='lib/jquery.capslockstate.js'/></script>
@@ -34,6 +34,8 @@
     <script src='gui/guiToolbar.js'></script>
     <script src='gui/guiSlider.js'></script>
     <script src='gui/guiSpinner.js'></script>
+    <script src='gui/guiDropdown.js'></script>
+    <script src='gui/guiDebug.js'></script>
 
     <script src='tools/toolNav.js'></script>
 
@@ -87,7 +89,7 @@
       cvs.onselectstart = function() { return false; }
       g_canvas = $( "#canvas" )[0];
       g_context = g_canvas.getContext('2d');
-    
+
       // Luna render
       g_painter = new lunaRender( g_canvas.width, g_canvas.height, g_context );
 
@@ -97,7 +99,7 @@
 
       // Luna input root
       g_input = new lunaInput( "canvas", g_root );
-      
+
       // Luna scene
       g_scene = new lunaScene ( g_canvas, g_context, g_input, g_root );
 
@@ -120,21 +122,21 @@
       testc.setClip ( true );
       testa.addChild ( testc );
 
-    var scroll = new guiScrollbar ( "d" );    
-    scroll.setSize ( 0, 0, 10, 200 );
-    scroll.setRange ( 0, 1000 );    
-    testa.addChild ( scroll );  
-    
+      var scrollb = new guiScrollbar ( "d" );
+      scrollb.setSize ( 0, 0, 10, 200 );
+      scrollb.setRange ( 0, 1000 );
+      testa.addChild ( scrollb );
+
       var test_button = new guiButton( "test:button" );
       test_button.setSize ( 10, 40, 32, 32 );
       testa.addChild ( test_button );
-    
+
       var img = new Image();
       img.src = "img/ghost_alt2_u.png";
       img.onload = function() {
         console.log("loading image", img);
         test_button.setImage( img );
-        test_button.setSize ( 10, 40, img.width, img.height );        
+        test_button.setSize ( 10, 40, img.width, img.height );
       }
       var img_d = new Image();
       img_d.src = "img/ghost_alt2.png";
@@ -142,10 +144,11 @@
         console.log("loading image", img_d );
         test_button.setPressImage( img_d );
       }
-    
+
 
 
       var test_tool = new guiToolbar( "tool" );
+      test_tool.prop_flag_resize = false;
       test_tool.setSize( 100, 300, 20, 20 );
       test_tool.addTool( "tool:a", img, img_d );
       test_tool.addTool( "tool:b", img, img_d );
@@ -166,8 +169,31 @@
       test_spinner2.setImage(img);
       g_root.addChild( test_spinner2 );
 
-      requestAnimationFrame( loop, 1 );     
-      
+      var test_dropdown = new guiDropdown( "dropdown" );
+      test_dropdown.setSize( 500, 100, 100, 100 );
+      test_dropdown.setInactiveSize( 100, 100 );
+      test_dropdown.setActiveSize(  100, 200 );
+      g_root.addChild( test_dropdown );
+
+      var debug_gui = new guiDebug( "debug" );
+      debug_gui.setSize( 500, 200, 100, 100 );
+      g_root.addChild( debug_gui );
+
+      //TESTING CUSTOM CALLBACK
+      test_slider.eventCallback =
+        function(e) { debug_gui.OnEvent(e); };
+
+      test_spinner.eventCallback =
+        function(e) { debug_gui.OnEvent(e); };
+
+      test_spinner2.eventCallback =
+        function(e) { debug_gui.OnEvent(e); };
+
+      test_button.eventCallback =
+        function(e) { debug_gui.OnEvent(e); };
+
+      requestAnimationFrame( loop, 1 );
+
     });
 
     if ( !window.requestAnimationFrame ) {

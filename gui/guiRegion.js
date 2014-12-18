@@ -33,6 +33,8 @@ function guiRegion( name )
   this.inv_transform   = [ [ 1, 0, 0], [0, 1, 0], [0, 0, 1] ];
   this.inv_world_transform = [ [ 1, 0, 0], [0, 1, 0], [0, 0, 1] ];
 
+  this.eventCallback = null;
+
   //this.pickCallback = null;
 }
 

@@ -33,14 +33,14 @@ guiButton.inherits( guiRegion );
 
 guiButton.prototype.setState = function( state ) {
   this.active_state = state;
-  var e = createEvent( this, "button", "state", "", null );
+  var e = createEvent( this, "button", "state", "", this.eventCallback );
   e.attach( this.active_state );
   sendEvent( e );
 }
 
 guiButton.prototype.toggleState = function() {
   this.active_state = !this.active_state;
-  var e = createEvent( this, "button", "state", "", null );
+  var e = createEvent( this, "button", "state", "", this.eventCallback );
   e.attach( this.active_state );
   sendEvent( e );
 }

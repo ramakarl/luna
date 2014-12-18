@@ -45,7 +45,7 @@ guiSpinner.prototype.OnMouseDown = function( button, x, y )
 
   this.value = Math.atan2(cy-y,cx-x);
 
-  var e = createEvent( this, "spinner", "mdown", "", null );
+  var e = createEvent( this, "spinner", "mdown", "", this.eventCallback );
   e.attach( this.value );
   sendEvent( e );
 
@@ -64,7 +64,7 @@ guiSpinner.prototype.OnMouseDrag = function( button, x, y ) {
 
   this.value = Math.atan2(cy-y,cx-x);
 
-  var e = createEvent( this, "spinner", "mdrag", "", null );
+  var e = createEvent( this, "spinner", "mdrag", "", this.eventCallback );
   e.attach( this.value );
   sendEvent( e );
 

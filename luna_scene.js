@@ -67,7 +67,9 @@ function sendEvent ( e )
   if ( e.obj != null && e.obj.parent != null ) {     
      e.startRead ();
      if ( e.obj.parent.OnEvent( e ) ) 
-        return true;
+     {
+       return true;
+     }
   }
   // Rule 2 - Try target name
   // .. not yet implemented ..
@@ -76,20 +78,24 @@ function sendEvent ( e )
   if ( e.callbk != null ) {
      e.startRead ();
      if ( e.callbk ( e ) ) 
+     {
        return true;
+     }
   }
 
   // Rule 4 - Go to luna global
   if ( g_scene.eventCallback != null ) {
      e.startRead ();
      if ( g_scene.eventCallback ( e ) ) 
+     {
        return true; 
+     }
   }
   return false;
 }
 
-function createEvent ( name, type, dest, callbk )
+function createEvent ( obj, name, type, dest, callbk )
 {
-  var e = new Event( name, type, dest, callbk );
+  var e = new Event( obj, name, type, dest, callbk );
   return e;  
 }
