@@ -989,6 +989,16 @@ lunaRender.prototype.drawPolygon = function( path,  x, y, color, fill, line_widt
 
 }
 
+lunaRender.prototype.translate = function( x,y ) {
+  var ctx = this.context;
+  ctx.translate( x, y );
+}
+
+lunaRender.prototype.rotate = function( angle_radian ) {
+  var ctx = this.context;
+  ctx.rotate( angle_radian );
+}
+
 lunaRender.prototype.drawFill = function( x, y, w, h, fill_color )
 {
   var ctx = this.context;
