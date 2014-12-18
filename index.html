@@ -85,8 +85,8 @@
       cvs.onselectstart = function() { return false; }
       g_canvas = $( "#canvas" )[0];
       g_context = g_canvas.getContext('2d');
-	  
-	    // Luna render
+    
+      // Luna render
       g_painter = new lunaRender( g_canvas.width, g_canvas.height, g_context );
 
       // Luna scene root
@@ -118,15 +118,15 @@
       testc.setClip ( true );
       testa.addChild ( testc );
 
-	  var scroll = new guiScrollbar ( "d" );	  
-	  scroll.setSize ( 0, 0, 10, 200 );
-	  scroll.setRange ( 0, 1000 );	  
-	  testa.addChild ( scroll );  
-	  
+    var scroll = new guiScrollbar ( "d" );    
+    scroll.setSize ( 0, 0, 10, 200 );
+    scroll.setRange ( 0, 1000 );    
+    testa.addChild ( scroll );  
+    
       var test_button = new guiButton( "test:button" );
       test_button.setSize ( 10, 40, 32, 32 );
       testa.addChild ( test_button );
-	  
+    
       var img = new Image();
       img.src = "img/ghost_alt2_u.png";
       img.onload = function() {
@@ -140,7 +140,7 @@
         console.log("loading image", img_d );
         test_button.setPressImage( img_d );
       }
-	  
+    
 
 
       var test_tool = new guiToolbar( "tool" );
