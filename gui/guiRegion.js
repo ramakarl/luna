@@ -132,7 +132,7 @@ guiRegion.prototype.drawChildren = function( sx, sy )
   if ( this.bClip ) {      
     g_scene.ctx.setTransform( M[0][0], M[1][0], M[0][1], M[1][1], M[0][2]-sx, M[1][2]-sy);     
     g_scene.ctx.beginPath();
-    g_scene.ctx.rect ( 0, 0, this.width, this.height );      
+    g_scene.ctx.rect ( -1, -1, this.width+2, this.height+2 ); 
     g_scene.ctx.closePath();
     //-- debug clipping (next 4 lines)
     //console.log ( "CLIP: " + this.name+ ":  " + M[0][2] + "," +M[1][2] + "," + M[0][0] + "," + M[1][1] );
@@ -144,35 +144,30 @@ guiRegion.prototype.drawChildren = function( sx, sy )
 
   // Draw self 
   g_scene.ctx.setTransform( M[0][0], M[1][0], M[0][1], M[1][1], M[0][2]-this.scrollx-sx, M[1][2]-this.scrolly-sy);  
+  if (this.bBackground) {
+    g_scene.ctx.fillStyle = this.bgColor;
+    g_scene.ctx.fillRect ( this.scrollx, this.scrolly, this.width, this.height );
+  }
   this.draw ();  
 
   // Draw children
   var child = null;
   for (var ind in this.guiChildren ) {
     child = this.guiChildren[ind];
-    if (child.visible) {
-
-      // background
-      if (child.bBackground) {
-        g_scene.ctx.fillStyle = child.bgColor;
-        g_scene.ctx.fillRect ( child.x, child.y, child.width, child.height );
-      }
-
-      // child
-      child.drawChildren( this.scrollx, this.scrolly );
-
-      // border
-      if ( !child.bOverlay ) {
-
-        if (child.bBorder) {
-          g_scene.ctx.beginPath();
-          g_scene.ctx.rect ( child.x, child.y, child.width, child.height );
-          g_scene.ctx.stroke ();
-          g_scene.ctx.closePath();
-        }
-      }
+    if (child.visible) 
+      child.drawChildren( this.scrollx, this.scrolly );    
+  }
+  // Draw border
+  if ( !this.bOverlay ) {
+    if (this.bBorder) {
+      g_scene.ctx.beginPath();
+      g_scene.ctx.rect ( this.scrollx, this.scrolly, this.width, this.height );      
+      g_scene.ctx.lineWidth = 1;        
+      g_scene.ctx.strokeStyle = 'rgba(150,150,150,1)';      
+      if ( g_scene.eFocus == this ) g_scene.ctx.strokeStyle = 'rgba(50,50,50,1)';      
+      g_scene.ctx.stroke();
     }
-  }   
+  }
  
   g_scene.ctx.restore();
 }
@@ -280,6 +275,8 @@ guiRegion.prototype.mouseDown = function( button, x, y )
  // map coords for self
   var cx = x + this.scrollx;   // scrolling
   var cy = y + this.scrolly;
+ 
+  g_scene.setFocus ( this );
 
   // recursive check children
   var child = null;
@@ -289,13 +286,11 @@ guiRegion.prototype.mouseDown = function( button, x, y )
       return true;
     }
   }
-
+   
   // check self for activity
-  if ( this.OnMouseDown ( button, cx, cy ) ) {
-     g_scene.setFocus ( this );
+  if ( this.OnMouseDown ( button, cx, cy ) ) {  
      return true;
   }
-
   return false;
 }
 

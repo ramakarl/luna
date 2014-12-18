@@ -166,6 +166,7 @@ lunaRender.prototype.drawGrid = function()
 	}
 	if ( this.gridMode == 2 ) {
 		// Lines
+    ctx.lineWidth = 0.5;
 		ctx.beginPath();
 		for (var x=x_start; x < x_stop; x += gridstep ) {
 		  ctx.moveTo ( x, view.y1 );
