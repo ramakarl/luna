@@ -33,21 +33,6 @@ guiText.prototype.OnMouseDown = function( button, x, y )
 }
 
 
-guiText.prototype.OnMouseUp = function( button, x, y ) {
-
-  if (this.button_type==0) {
-    this.setState(false);
-    //this.active_state= false;
-  } else if (this.button_type==2) {
-    this.toggleState();
-    //this.active_state = !this.active_state;
-  } else if (this.button_type==4) {
-    this.setState(true);
-    //this.active_state = true;
-  }
-  return true;
-}
-
 guiText.prototype.OnKeyPress = function( key, extd )
 {
   console.log ( "key: "+key + " " + extd );
@@ -85,6 +70,7 @@ guiText.prototype.moveCursor = function(dx, dy)
   this.cursorx += dx;
   this.cursory += dy;
   if ( this.cursorx < 0 ) this.cursorx = 0;
+  if ( this.cursorx > this.text.length ) this.cursorx = this.text.length;
   if ( this.cursory < 0 ) this.cursory = 0;
 }
 
