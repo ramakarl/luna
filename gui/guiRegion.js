@@ -204,6 +204,16 @@ guiRegion.prototype.hitTest = function(x, y)
   return null;
 }
 
+guiRegion.prototype.keyPress = function( key, extd )
+{
+  if ( g_scene.eFocus != null ) {
+    if ( g_scene.eFocus.OnKeyPress ( key, extd ) )
+      return true;
+  }
+  return false;
+}
+
+
 guiRegion.prototype.mouseUp = function( button, x, y )
 {
   if (!this.visible) return false;
@@ -412,6 +422,10 @@ guiRegion.prototype.OnMouseDrag = function( button, x, y )
   return false;
 }
 guiRegion.prototype.OnMouseMove = function( button, x, y )
+{
+  return false;
+}
+guiRegion.prototype.OnKeyPress = function( key, extd )
 {
   return false;
 }

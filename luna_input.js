@@ -50,10 +50,10 @@ lunaInput.prototype.init = function() {
 
     t.mouse_drag[button] = true;
     t.gui_root.mouseDown( button, x, y );
-
   });
 
   $(canvas_id).mouseover( function(e) {
+    e.preventDefault();
     var x = e.pageX,
         y = e.pageY;
 
@@ -124,15 +124,45 @@ lunaInput.prototype.init = function() {
 
   });
 
+  $(canvas_id).keypress( function(e) {
+
+    // Handle typed keys only here.
+    var key = e.which || e.keyCode;
+
+    if (t.debug) { console.log(">> keypress", e); } 
+   
+    t.gui_root.keyPress( key, 0 );
+
+    e.preventDefault();
+    return false;
+  });
+
   $(canvas_id).keydown( function(e) {
-    var key = e.which;
+
+    var key = e.which || e.keyCode;
 
     if (t.debug) { console.log(">> keydown", e); } 
+  
+    console.log( "key" + key );
 
     t.key_state[ key ] = true;
 
-    //t.gui_root.keyDown( key, e );
+    // check for typeable keys (non-control)
+    // keypress will handle typed keys
+    var isTyped =  
+        (key > 47 && key < 58)   || // number keys
+        key == 32 || key == 13   || // spacebar & return key(s) (if you want to allow carriage returns)
+        (key > 64 && key < 91)   || // letter keys
+        (key > 95 && key < 112)  || // numpad keys
+        (key > 185 && key < 193) || // ;=,-./` (in order)
+        (key > 218 && key < 223);   // [\]' (in order)
 
+    if ( !isTyped ) {
+       // handle control keys now
+       t.gui_root.keyPress( key, 1 );
+       e.preventDefault();
+       return false;
+    }
   });
 
   $(canvas_id).keyup( function(e) {
@@ -144,16 +174,10 @@ lunaInput.prototype.init = function() {
 
     //t.gui_root.keyUp( key, e );
 
+    e.preventDefault();
+    return false;
   });
 
-  $(canvas_id).keypress( function(e) {
-    var key = e.which;
-
-    if (t.debug) { console.log(">> keypress", e); } 
-
-    //t.gui_root.keyPress( key );
-
-  });
 
   $(canvas_id).resize( function(width, height, e) {
 

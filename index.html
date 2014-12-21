@@ -29,6 +29,7 @@
     <script src='gui/guiGrid.js'></script>
     <script src='gui/guiTextbox.js'></script>
     <script src='gui/guiAction.js'></script>
+    <script src='gui/guiText.js'></script>
 
     <script src='gui/guiButton.js'></script>
     <script src='gui/guiToolbar.js'></script>
@@ -90,6 +91,13 @@
       g_canvas = $( "#canvas" )[0];
       g_context = g_canvas.getContext('2d');
 
+     // prevent browser from scrolling 
+     $("#canvas")[0].addEventListener('touchmove', function(e) {
+       console.log ( "GOT HERE!" );
+       e.preventDefault();
+       brushMove();
+     },false);
+
       // Luna render
       g_painter = new lunaRender( g_canvas.width, g_canvas.height, g_context );
 
@@ -127,6 +135,11 @@
       scrollb.setRange ( 0, 1000 );
       testa.addChild ( scrollb );
 
+
+      var text1 = new guiText ( "txt" );
+      text1.setSize ( 200, 300, 200, 100 );
+      g_root.addChild ( text1 );
+
       var test_button = new guiButton( "test:button" );
       test_button.setSize ( 10, 40, 32, 32 );
       testa.addChild ( test_button );
@@ -144,8 +157,6 @@
         console.log("loading image", img_d );
         test_button.setPressImage( img_d );
       }
-
-
 
       var test_tool = new guiToolbar( "tool" );
       test_tool.prop_flag_resize = false;
