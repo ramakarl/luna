@@ -28,7 +28,7 @@ function guiText( name )
 guiText.inherits( guiRegion );
 
 guiText.prototype.findTextXY = function( px, py ) {
-  q = Math.floor( py / this.textsize );
+  var q = Math.floor( py / this.textsize );
 
   if (q < this.text.length) {
 
