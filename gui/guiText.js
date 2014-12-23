@@ -3,46 +3,61 @@ function guiText( name )
 {
   this.constructor(name);
 
-  //this.text = "Hello world!";
-  this.text = [ "Hello ...", "there!", "^-^" ] ;
+  //this.text = [ "Hello ...", "there!", "^-^" ] ;
+  this.text = [ "Hello" ];
   this.textsize = 20;
-  this.textclr = "black";
+  //this.textclr = "black";
+  this.textclr = "gray";
+
+  // -1, infinite
+  // otherwise maximum allowed
+  //
+  this.maxline = 2;
+  this.maxwidth = 10;
 
   this.cursorx = 0;
   this.cursory = 0;
   this.cursorline = 0;
 
   this.show_cursor = true;
+  this.read_only = false;
 
-  this.font = String(this.textsize) + "px Georgia";
+  //this.font = String(this.textsize) + "px Georgia";
+  this.font = String(this.textsize) + "px Courier New";
 }
-
 guiText.inherits( guiRegion );
 
-
-guiText.prototype.OnMouseDown = function( button, x, y ) 
-{
-  q = Math.floor( y / this.textsize );
+guiText.prototype.findTextXY = function( px, py ) {
+  q = Math.floor( py / this.textsize );
 
   if (q < this.text.length) {
 
     var w = g_scene.ctx.measureText( this.text[q] ).width;
-    if ( x > w ) {
-      this.cursorx = this.text[q].length;
-      this.cursory = q;
+    if ( px > w ) {
+      return [ this.text[q].length, q ];
       return true;
     }
 
-    this.cursorx = 0;
+    var cx = 0;
     g_scene.ctx.font = this.font;
-    var dms = g_scene.ctx.measureText( this.text[q].substring(0,this.cursorx) ).width;
-    while ( x > dms && this.cursorx < this.text[q].length ) {
-      this.cursorx++;
-      dms = g_scene.ctx.measureText( this.text[q].substring(0,this.cursorx) ).width;
+    var dms = g_scene.ctx.measureText( this.text[q].substring(0,cx) ).width;
+    while ( (px > dms) && (cx < this.text[q].length) ) {
+      cx++;
+      dms = g_scene.ctx.measureText( this.text[q].substring(0,cx) ).width;
     }
-    this.cursorx--;
-    this.cursory = q;
+    cx--;
+    return [ cx, q ];
+  }
 
+  return [-1,-1];
+}
+
+guiText.prototype.OnMouseDown = function( button, x, y ) 
+{
+  xy = this.findTextXY(x,y);
+  if ((xy[0] >= 0) && (xy[1] >= 0)) {
+    this.cursorx = xy[0];
+    this.cursory = xy[1];
   }
 
   return true;
@@ -52,6 +67,8 @@ guiText.prototype.OnMouseDown = function( button, x, y )
 guiText.prototype.OnKeyPress = function( key, extd )
 {
 
+  if (this.read_only) return;
+
   switch ( key ) {
   case 37:  this.moveCursor(-1, 0);   break;  // left
   case 39:  this.moveCursor(+1, 0);   break;  // right
@@ -60,18 +77,20 @@ guiText.prototype.OnKeyPress = function( key, extd )
 
   // return
   case 13:
-    var cx = this.cursorx;
-    var cy = this.cursory;
-    var w = this.text[cy].length;
+    if ( (this.maxline<0) || (this.text.length < this.maxline) ) {
+      var cx = this.cursorx;
+      var cy = this.cursory;
+      var w = this.text[cy].length;
 
-    var a = this.text[cy].substring( 0, cx );
-    var b = this.text[cy].substring( cx, w );
+      var a = this.text[cy].substring( 0, cx );
+      var b = this.text[cy].substring( cx, w );
 
-    this.text.splice( cy+1, 0, "" );
-    this.text[cy] = a;
-    this.text[cy+1] = b;
-    this.moveCursor(0,+1);
-    this.cursorx = 0;
+      this.text.splice( cy+1, 0, "" );
+      this.text[cy] = a;
+      this.text[cy+1] = b;
+      this.moveCursor(0,+1);
+      this.cursorx = 0;
+    }
     break;
 
   case 36:    // home
@@ -89,6 +108,16 @@ guiText.prototype.OnKeyPress = function( key, extd )
 
      if ((cx==0) && (cy>0)) {
        var w = this.text[cy-1].length;
+      
+       var new_w = w + this.text[cy].length;
+
+       // Don't allow if the new lines exceeds
+       // maxwidth.
+       //
+       if ( (this.maxwidth>0) && (new_w>this.maxwidth) ) {
+         break
+       }
+
        this.text[cy-1] = this.text[cy-1] + this.text[cy];
        this.text.splice( cy, 1 );
 
@@ -109,7 +138,7 @@ guiText.prototype.OnKeyPress = function( key, extd )
 
   default:
      var p = this.cursory;
-     if ( extd==0 ) {
+     if ( ( extd==0 ) && ( (this.maxwidth < 0) || (this.text[p].length < this.maxwidth) ) ) {
         this.text[p] =
           this.text[p].substring(0,this.cursorx) +
           String.fromCharCode(key) +
@@ -127,10 +156,11 @@ guiText.prototype.moveCursor = function(dx, dy)
   this.cursorx += dx;
   this.cursory += dy;
   if ( this.cursory >= this.text.length ) this.cursory = this.text.length-1;
+  if ( this.cursory < 0 ) this.cursory = 0;
+
   if ( this.cursorx < 0 ) this.cursorx = 0;
   if ( this.cursorx > this.text[ this.cursory ].length )
     this.cursorx = this.text[ this.cursory ].length;
-  if ( this.cursory < 0 ) this.cursory = 0;
 }
 
 
