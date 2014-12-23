@@ -143,8 +143,6 @@ lunaInput.prototype.init = function() {
 
     if (t.debug) { console.log(">> keydown", e); } 
   
-    console.log( "key" + key );
-
     t.key_state[ key ] = true;
 
     // check for typeable keys (non-control)
@@ -155,14 +153,18 @@ lunaInput.prototype.init = function() {
         (key > 64 && key < 91)   || // letter keys
         (key > 95 && key < 112)  || // numpad keys
         (key > 185 && key < 193) || // ;=,-./` (in order)
+        (key > 185 && key < 193) || // ;=,-./` (in order)
+        (key > 111 && key < 124) || // F keys
         (key > 218 && key < 223);   // [\]' (in order)
 
     if ( !isTyped ) {
        // handle control keys now
        t.gui_root.keyPress( key, 1 );
        e.preventDefault();
+
        return false;
     }
+
   });
 
   $(canvas_id).keyup( function(e) {
