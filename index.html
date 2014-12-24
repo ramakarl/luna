@@ -31,6 +31,8 @@
     <script src='gui/guiAction.js'></script>
     <script src='gui/guiText.js'></script>
 
+    <script src='gui/guiTextAccordian.js'></script>
+
     <script src='gui/guiButton.js'></script>
     <script src='gui/guiToolbar.js'></script>
     <script src='gui/guiSlider.js'></script>
@@ -139,6 +141,10 @@
       var text1 = new guiText ( "txt" );
       text1.setSize ( 200, 300, 200, 100 );
       g_root.addChild ( text1 );
+
+      var accor1 = new guiTextAccordian ( "accordian" );
+      accor1.setSize ( 600, 300, 200, 100 );
+      g_root.addChild ( accor1 );
 
       var test_button = new guiButton( "test:button" );
       test_button.setSize ( 10, 40, 32, 32 );

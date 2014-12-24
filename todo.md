@@ -41,3 +41,14 @@ Events
   - Named destination
   - Custom callback
   - System callback
+
+
+### Ideas
+
+  There might be a better way to do event handling.  Here's a proposal:
+
+    - Events are handled by a central dispatcher
+    - elements (gui or otherwise) can subscribe to 'channels' that
+      pass communication information around
+    - elements can publish to channels to communicate with everyone
+      who needs a signal.

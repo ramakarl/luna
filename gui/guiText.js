@@ -1,8 +1,10 @@
 
+
 function guiText( name )
 {
   this.constructor(name);
 
+  this.text = "Hello world!";
   this.bClip = true;
   this.text = [ "This is a fun little", "window that lets me", "enter some text." ];
   this.textsize = 20;
@@ -34,14 +36,18 @@ guiText.prototype.OnMouseDown = function( button, x, y )
   this.cursory = Math.floor(y / this.textsize);
   if ( this.cursory >= this.text.length ) this.cursory = this.text.length-1;
   this.cursorx = 0;
+
   g_scene.ctx.font = String(this.textsize)+"px Georgia";
   while ( x > this.textWidth() && this.cursorx < this.text[this.cursory].length ) {
      this.cursorx++;
   }
   this.cursorx--;
+  this.cursory = 0;
+
  
   return true;
 }
+
 guiText.prototype.InsertLine = function ( pos )
 {
   this.text.splice ( pos+1, 0, "");
@@ -52,8 +58,8 @@ guiText.prototype.OnKeyPress = function( key, extd )
   var y = this.cursory;
   console.log ( "key: "+key + " " + extd );
   switch ( key ) {
-  case 37:  this.moveCursor(-1, 0);   break;  // left
   case 39:  this.moveCursor(+1, 0);   break;  // right
+  case 37:  this.moveCursor(-1, 0);   break;  // left
   case 38:  this.moveCursor( 0,-1);   break;  // up
   case 40:  this.moveCursor( 0,+1);   break;  // down
   case 36:    // home
@@ -94,8 +100,9 @@ guiText.prototype.OnKeyPress = function( key, extd )
         this.moveCursor ( 1, 0 );
      }
      break;
-  };
+  }
 }
+
 
 guiText.prototype.moveCursor = function(dx, dy)
 {
@@ -105,7 +112,6 @@ guiText.prototype.moveCursor = function(dx, dy)
   if ( this.cursory >= this.text.length ) this.cursory = this.text.length-1;
   if ( this.cursorx < 0 ) this.cursorx = 0;	
   if ( this.cursorx > this.text[this.cursory].length ) this.cursorx = this.text[this.cursory].length;
-
 }
 
 
@@ -120,4 +126,3 @@ guiText.prototype.draw = function()
   // cursor
   g_painter.drawFill ( this.textWidth(), this.cursory*this.textsize, 2, this.textsize, "rgba(255,0,0,1)" );
 }
-
