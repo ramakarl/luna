@@ -1,8 +1,32 @@
 
+/* items (at least initially) can be buttons or single line
+ *   (read only) text.
+ * The dropdown is a (static) list of buttons/text lines.
+ * The dropdown can be underneath, to the sides or above.
+ * The dropdown activation can be on the sides or from
+ *   the full widget.
+ * Dropdown selection can be made to bubble up.
+ */
+
 function guiDropdown( name )
 {
   this.name = name;   
   this.active_state = false;
+
+  // R - right, L - left, T - top, B - bottom
+  this.drop_side = "R";
+
+  // R - right, L - left, U - up, D - down
+  this.drop_direction = "D";
+
+  // F - full, R - right, L - left, T - top, B - bottom
+  this.active_region = "R";
+
+  this.active_element = null;
+  this.drop_list = [ ];
+
+  // B - bubble, S - static
+  this.selection_policy = "B";
 
   this.inactive_size = [ this.width, this.height ];
   this.active_size = [ this.width, this.height + 100 ];
