@@ -3,7 +3,11 @@ function guiTextAccordian( name )
 {
   this.constructor(name);
 
-  this.accordian = [ this.accordianElement("PARENT"), this.accordianElement("sibling") ];
+  this.accordian = [
+    this.accordianElement("PARENT"),
+    this.accordianElement("sibling"),
+    this.accordianElement("sib")
+  ];
   this.textsize = 20;
   this.textclr = "gray";
 
@@ -12,6 +16,11 @@ function guiTextAccordian( name )
     this.accordianElement("child0"),
     this.accordianElement("child1"),
     this.accordianElement("ygM")
+  ];
+
+  this.accordian[2].children = [
+    this.accordianElement("child2"),
+    this.accordianElement("child3")
   ];
 
   this.accordian[0].children[1].children = [
@@ -142,25 +151,19 @@ guiTextAccordian.prototype.OnMouseDown = function( button, x, y )
 }
 
 guiTextAccordian.prototype.draw_collapse_widget  = function( ele, x, y ) {
-  //g_painter.drawRect( x - 5, y + 5 , 10, 10, this.textclr );
   g_painter.drawRect( x, y + 5 , 10, 10, this.textclr );
 
-  g_scene.ctx.fillStyle = this.textclr;
   if (ele.children.length == 0) {
-    //g_painter.drawFill( x-1, y+9, 2, 2, this.textclr );
-    g_painter.drawFill( x+3, y+9, 2, 2, this.textclr );
+    g_painter.drawFill( x+4, y+9, 2, 2, this.textclr );
   } else {
-
     if (ele.collapsed) {
-      //g_painter.line( x-3, y+10, x+3, y+10, this.textclr, 2);
-      //g_painter.line( x, y+7, x, y+13, this.textclr, 2);
-      g_painter.line( x+2, y+10, x+8, y+10, this.textclr, 2);
-      g_painter.line( x+5, y+7, x+5, y+13, this.textclr, 2);
+      g_painter.line( x+2, y+10, x+8, y+10, this.textclr, 1);
+      g_painter.line( x+5, y+7, x+5, y+13, this.textclr, 1);
     } else {
-      //g_painter.line( x-3, y+10, x+3, y+10, this.textclr, 2);
-      g_painter.line( x+2, y+10, x+8, y+10, this.textclr, 2);
+      g_painter.line( x+2, y+10, x+8, y+10, this.textclr, 1);
     }
   }
+
 }
 
 guiTextAccordian.prototype.draw_r = function( ele, h, indent )
