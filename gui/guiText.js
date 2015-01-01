@@ -35,15 +35,13 @@ guiText.prototype.OnMouseDown = function( button, x, y )
 {
   this.cursory = Math.floor(y / this.textsize);
   if ( this.cursory >= this.text.length ) this.cursory = this.text.length-1;
-  this.cursorx = 0;
 
+  this.cursorx = 0;
   g_scene.ctx.font = String(this.textsize)+"px Georgia";
   while ( x > this.textWidth() && this.cursorx < this.text[this.cursory].length ) {
      this.cursorx++;
   }
   this.cursorx--;
-  this.cursory = 0;
-
  
   return true;
 }
